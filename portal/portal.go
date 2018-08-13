@@ -21,6 +21,10 @@ func New(c *exec.Cmd, name string) *Portal {
 	return &Portal{Cmd: c, Name: name}
 }
 
+//////////////////////////
+// Wrapper functions
+//////////////////////////
+
 // StdoutPipe returns a pipe that will be connected to the command's standard
 // output when the command starts.
 func (p *Portal) StdoutPipe() (out io.ReadCloser, err error) {
@@ -56,6 +60,10 @@ func (p *Portal) Wait() error {
 	return nil
 }
 
+//////////////////////////
+// Reading from Portal
+//////////////////////////
+
 // Read allows for the reading of data from a command's standard output.
 func (p *Portal) Read(dst []byte) (n int, err error) {
 	out, err := p.StdoutPipe()
@@ -76,10 +84,10 @@ func (p *Portal) Read(dst []byte) (n int, err error) {
 	return n, err
 }
 
-// ReadFrom allows for the piping of data from a io.Writer into a command's
-// standard output.
-func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
-	in, err := p.StdinPipe()
+// WriteTo allows for the piping of data from a command's standard output into
+// an io.Writer.
+func (p *Portal) WriteTo(w io.Writer) (n int64, err error) {
+	out, err := p.StdoutPipe()
 	if err != nil {
 		return 0, err
 	}
@@ -88,17 +96,18 @@ func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 		return 0, err
 	}
 
-	if n, err = io.Copy(in, r); err != nil {
-		return n, fmt.Errorf("failed to write to %s command input: %v", p.Name, err)
-	}
-
-	if err = in.Close(); err != nil {
-		return n, fmt.Errorf("failed to close input to %s command: %v", p.Name, err)
+	if n, err = io.Copy(w, out); err != nil {
+		return n, fmt.Errorf("failed to copy output from %s command: %v", p.Name,
+			err)
 	}
 
 	err = p.Wait()
 	return n, err
 }
+
+//////////////////////////
+// Writing to Portal
+//////////////////////////
 
 // Write allows for the writing of data into a command's standard input.
 func (p *Portal) Write(src []byte) (n int, err error) {
@@ -123,10 +132,10 @@ func (p *Portal) Write(src []byte) (n int, err error) {
 	return n, err
 }
 
-// WriteTo allows for the piping of data from a command's standard output into
-// an io.Writer.
-func (p *Portal) WriteTo(w io.Writer) (n int64, err error) {
-	out, err := p.StdoutPipe()
+// ReadFrom allows for the piping of data from a io.Writer into a command's
+// standard output.
+func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
+	in, err := p.StdinPipe()
 	if err != nil {
 		return 0, err
 	}
@@ -135,9 +144,12 @@ func (p *Portal) WriteTo(w io.Writer) (n int64, err error) {
 		return 0, err
 	}
 
-	if n, err = io.Copy(w, out); err != nil {
-		return n, fmt.Errorf("failed to copy output from %s command: %v", p.Name,
-			err)
+	if n, err = io.Copy(in, r); err != nil {
+		return n, fmt.Errorf("failed to write to %s command input: %v", p.Name, err)
+	}
+
+	if err = in.Close(); err != nil {
+		return n, fmt.Errorf("failed to close input to %s command: %v", p.Name, err)
 	}
 
 	err = p.Wait()

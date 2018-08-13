@@ -24,15 +24,9 @@ func MakeBoard(copyCmd, pasteCmd *exec.Cmd) *Board {
 	}
 }
 
-// Write copies data from "p" into the system clipboard.
-func (b *Board) Write(p []byte) (n int, err error) {
-	return b.CopyPortal.Write(p)
-}
-
-// WriteString writes the provided string into the system clipboard.
-func (b *Board) WriteString(s string) (n int, err error) {
-	return b.CopyPortal.Write([]byte(s))
-}
+//////////////////////////
+// Reading from Board
+//////////////////////////
 
 // Read reads data from the system clipboard into "p".
 func (b *Board) Read(p []byte) (n int, err error) {
@@ -51,4 +45,23 @@ func (b *Board) ReadString() (s string, err error) {
 // WriteTo writes data from the system clipboard into the provided io.Writer.
 func (b *Board) WriteTo(w io.Writer) (n int64, err error) {
 	return b.PastePortal.WriteTo(w)
+}
+
+//////////////////////////
+// Writing to Board
+//////////////////////////
+
+// Write copies data from "p" into the system clipboard.
+func (b *Board) Write(p []byte) (n int, err error) {
+	return b.CopyPortal.Write(p)
+}
+
+// WriteString writes the provided string into the system clipboard.
+func (b *Board) WriteString(s string) (n int, err error) {
+	return b.CopyPortal.Write([]byte(s))
+}
+
+// ReadFrom reads data from the provided io.Reader into the system clipboard.
+func (b *Board) ReadFrom(r io.Reader) (n int64, er error) {
+	return b.CopyPortal.ReadFrom(r)
 }

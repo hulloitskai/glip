@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/steven-xie/glip"
-	"io"
 	"os"
 )
 
@@ -21,7 +20,7 @@ func main() {
 	}
 
 	if (info.Mode() & os.ModeCharDevice) == 0 {
-		if _, err := io.Copy(b, os.Stdin); err != nil {
+		if _, err := b.ReadFrom(os.Stdin); err != nil {
 			errln("Failed to write to system clipboard:", err)
 		}
 

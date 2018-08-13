@@ -17,6 +17,10 @@ func init() {
 	}
 }
 
+////////////////////////////
+// Reading from Global
+////////////////////////////
+
 // checkGlobal returns an error if "global" is nil.
 func checkGlobal() error {
 	if global == nil {
@@ -42,6 +46,18 @@ func ReadString() (s string, err error) {
 	return global.ReadString()
 }
 
+// WriteTo writes data from the system clipboard into the given io.Writer.
+func WriteTo(w io.Writer) (n int64, err error) {
+	if err = checkGlobal(); err != nil {
+		return 0, err
+	}
+	return global.WriteTo(w)
+}
+
+////////////////////////////
+// Writing to Global
+////////////////////////////
+
 // Write records data from "p" into the system clipboard.
 func Write(p []byte) (n int, err error) {
 	if err = checkGlobal(); err != nil {
@@ -58,10 +74,10 @@ func WriteString(s string) (n int, err error) {
 	return global.WriteString(s)
 }
 
-// WriteTo data from the system clipboard into the given io.Writer.
-func WriteTo(w io.Writer) (n int64, err error) {
+// ReadFrom reads data from an io.Reader into the system clipboard.
+func ReadFrom(r io.Reader) (n int64, err error) {
 	if err = checkGlobal(); err != nil {
 		return 0, err
 	}
-	return global.WriteTo(w)
+	return global.ReadFrom(r)
 }

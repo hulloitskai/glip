@@ -66,9 +66,9 @@ _`glip` has not been tested yet on Linux!_
 which uses `glip` underneath the hood.
 
 It was developed as an example of how `glip` can be used, as well as to be a
-universal clipboard interface that other external programs can call in order to
-write to a system clipboard, if the underlying platform-specific command is
-available. _No more platform-specific tomfoolery!_
+universal clipboard interface that external programs can call in order to write
+to a system clipboard, if the underlying platform-specific command is available.
+_No more platform-specific tomfoolery!_
 
 [godoc]: https://godoc.org/github.com/steven-xie/glip
 [godoc-img]: https://godoc.org/github.com/steven-xie/glip?status.svg
