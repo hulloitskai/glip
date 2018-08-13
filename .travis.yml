@@ -1,0 +1,19 @@
+language: go
+
+go:
+  - '1.10'
+  - tip
+
+git:
+  depth: 3
+
+before_install:
+  # - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  - go get -u golang.org/x/lint/golint
+
+install: go get -t ./...
+
+script: make review-race
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
