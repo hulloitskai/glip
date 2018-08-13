@@ -3,6 +3,8 @@
 _A clipboard interface for Go, compatible with Windows, Mac OS X, and Linux._
 
 [![godoc: reference][godoc-img]][godoc]
+[![travis: build][travis-img]][travis]
+[![codecov: coverage][codecov-img]][codecov]
 
 ## Usage
 
@@ -66,3 +68,7 @@ available. _No more platform-specific tomfoolery!_
 
 [godoc]: https://godoc.org/github.com/steven-xie/glip
 [godoc-img]: https://godoc.org/github.com/steven-xie/glip?status.svg
+[travis]: https://travis-ci.org/steven-xie/glip
+[travis-img]: https://travis-ci.org/steven-xie/glip.svg?branch=master
+[codecov]: https://codecov.io/gh/steven-xie/glip
+[codecov-img]: https://codecov.io/gh/steven-xie/glip/branch/master/graph/badge.svg

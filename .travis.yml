@@ -7,9 +7,18 @@ go:
 git:
   depth: 3
 
+os:
+  - linux
+  - osx
+
+## Testing configuration...
+
 before_install:
   # - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
   - go get -u golang.org/x/lint/golint
+  - if [ "$TRAVIS_OS_NAME" == linux ];
+    then sudo apt-get install -y xclip;
+    fi
 
 install: go get -t ./...
 

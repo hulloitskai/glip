@@ -51,7 +51,7 @@ func (p *Portal) Start() error {
 // copying from stdout or stderr to complete.
 func (p *Portal) Wait() error {
 	if err := p.Cmd.Wait(); err != nil {
-		return fmt.Errorf("%v command failed to stop correctly: %err", p.Name, err)
+		return fmt.Errorf("%s command failed to stop correctly: %v", p.Name, err)
 	}
 	return nil
 }
