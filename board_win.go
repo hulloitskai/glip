@@ -16,7 +16,7 @@ func NewBoard() (b *Board, err error) {
 		return nil, err
 	}
 
-	b := MakeBoard(
+	b = MakeBoard(
 		exec.Command(copyCmdName),
 		exec.Command(pasteCmdName),
 	)

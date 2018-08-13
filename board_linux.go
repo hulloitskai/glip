@@ -1,6 +1,6 @@
 // +build linux openbsd netbsd solaris
 
-package glip_test
+package glip
 
 import (
 	"errors"
@@ -71,9 +71,9 @@ func NewLinuxBoard(lc LinuxCmd, clipboard string, args ...string) (
 	if clipboard != LinuxDefaultClipboard {
 		switch cmdName {
 		case "xclip":
-			cmdArgs = append([]string{"-sel", clipboard}, args)
+			cmdArgs = append([]string{"-sel", clipboard}, args...)
 		case "xsel":
-			cmdArgs = append([]string{"--" + clipboard}, args)
+			cmdArgs = append([]string{"--" + clipboard}, args...)
 		default:
 			err = fmt.Errorf("unable to create clipboard from unknown command: %s",
 				cmdName)
@@ -88,7 +88,7 @@ func NewLinuxBoard(lc LinuxCmd, clipboard string, args ...string) (
 	switch cmdName {
 	case "xclip":
 		copyCmd = exec.Command(cmdName, cmdArgs...)
-		pasteCmd = exec.Command(cmdName, "-o", cmdArgs...)
+		pasteCmd = exec.Command(cmdName, append([]string{"-o"}, cmdArgs...)...)
 	case "xsel":
 		copyCmd = exec.Command(cmdName, cmdArgs...)
 		pasteCmd = copyCmd
@@ -104,5 +104,5 @@ func NewLinuxBoard(lc LinuxCmd, clipboard string, args ...string) (
 // NewBoard creates a new Board, if all the necessary system commands ar
 // available.
 func NewBoard() (b *Board, err error) {
-	return NewBoardWith(Auto, LinuxDefaultClipboard)
+	return NewLinuxBoard(Auto, LinuxDefaultClipboard)
 }

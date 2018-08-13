@@ -1,15 +1,15 @@
 package main
 
 import (
-	"io"
 	"fmt"
-	"bufio"
 	"github.com/steven-xie/glip"
+	"io"
 	"os"
 )
 
-
 func main() {
+	var err error
+
 	info, err := os.Stdin.Stat()
 	if err != nil {
 		errln("Failed to read standard input information:", err)
@@ -21,21 +21,19 @@ func main() {
 	}
 
 	if (info.Mode() & os.ModeCharDevice) == 0 {
-		r := bufio.NewReader(os.Stdin)
-
-		if _, err = r.WriteTo(b); err != nil {
+		if _, err := io.Copy(b, os.Stdin); err != nil {
 			errln("Failed to write to system clipboard:", err)
 		}
+
+		return
 	}
-	s := bufio.NewScanner(os.Stdin)
 
-	if !s.Scan() &&
-
-	// See if there's any data to be read from os.Stdin.
-	data, err := r.Peek(1)
-	if err = bufio.ErrFinalToken
+	// No input was available...
+	if _, err = b.WriteTo(os.Stdout); err != nil {
+		errln("Failed to write clipboard contents to standard output:", err)
+	}
 }
 
 func errln(a ...interface{}) {
-	fmt.Fprintln(os.Stdout, a...)
+	fmt.Fprintln(os.Stderr, a...)
 }

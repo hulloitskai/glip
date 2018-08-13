@@ -52,5 +52,17 @@ Linux (since there's no built-in clipboard interface). `glip` will choose
 one of those two programs automatically, unless you build a custom board with
 the `NewLinuxBoard` function.
 
+---
+
+## glipboard
+
+`glipboard` is a basic cross-platform command-line clipboard interface
+which uses `glip` underneath the hood.
+
+It was developed as an example of how `glip` can be used, as well as to be a
+universal clipboard interface that other external programs can call in order to
+write to a system clipboard, if the underlying platform-specific command is
+available. _No more platform-specific tomfoolery!_
+
 [godoc]: https://godoc.org/github.com/steven-xie/glip
 [godoc-img]: https://godoc.org/github.com/steven-xie/glip?status.svg
