@@ -42,6 +42,8 @@ func main() {
 `glip` uses the `paste` and `copy` commands on Windows to manipulate the
 clipboard. This is available _starting from Windows 7, and onwards_.
 
+_`glip` has not yet been tested on Windows!_
+
 ### Mac OS X:
 
 `glip` uses `pbcopy` and `pbpaste` commands on OS X; this has been available
@@ -54,7 +56,9 @@ Linux (since there's no built-in clipboard interface). `glip` will choose
 one of those two programs automatically, unless you build a custom board with
 the `NewLinuxBoard` function.
 
----
+_`glip` has not been tested yet on Linux!_
+
+<br />
 
 ## glipboard
 
