@@ -1,11 +1,14 @@
-package glip
+package glip_test
 
-import "testing"
+import (
+	"github.com/steven-xie/glip"
+	"testing"
+)
 
 func TestBoard(t *testing.T) {
-	b, err := NewBoard()
+	b, err := glip.NewBoard()
 	if err != nil {
-		t.Error("Failed to instantiate clipboard:", err)
+		t.Error("Failed to instantiate Board:", err)
 	}
 
 	const in = "Hello, clipboard!"
@@ -21,5 +24,22 @@ func TestBoard(t *testing.T) {
 	if out != in {
 		t.Errorf("Expected clipboard paste contents to equal copied string "+
 			"(\"%s\"), instead got: \"%s\"", in, out)
+	}
+}
+
+func TestBoardSafety(t *testing.T) {
+	b, err := glip.NewBoard()
+	if err != nil {
+		t.Error("Failed to instantiate Board:", err)
+	}
+
+	b.CopyPortal = nil
+	if b.IsWriteable() {
+		t.Error("Board should not be writeable with a nil CopyPortal")
+	}
+
+	b.PastePortal = nil
+	if b.IsReadable() {
+		t.Error("Board should not be readable with a nil PastePortal")
 	}
 }

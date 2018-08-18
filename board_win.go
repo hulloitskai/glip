@@ -2,23 +2,29 @@
 
 package glip
 
-import "os/exec"
+import (
+	"github.com/steven-xie/glip/portal"
+	"os/exec"
+)
 
 // NewBoard creates a new Board, if all the necessary system commands ar
 // available.
 func NewBoard() (b *Board, err error) {
-	const (
-		copyCmdName  = "copy"
-		pasteCmdName = "paste"
-	)
+	const copyCmdName = "clip"
+	const pasteCmdName = "paste"
 
-	if err = verifyCommands(copyCmdName, pasteCmdName); err != nil {
+	if err = verifyCommand(copyCmdName); err != nil {
 		return nil, err
 	}
 
-	b = MakeBoard(
-		exec.Command(copyCmdName),
-		exec.Command(pasteCmdName),
+	var (
+		copyCmd  = exec.Command(copyCmdName)
+		pasteCmd *exec.Cmd
 	)
+	if err = verifyCommand(pasteCmdName); err != nil {
+		pasteCmd = exec.Command(pasteCmdName)
+	}
+
+	b = MakeBoard(copyCmd, pasteCmd)
 	return b, nil
 }

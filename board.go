@@ -1,10 +1,11 @@
 package glip
 
 import (
-	"bytes"
+	"fmt"
 	"github.com/steven-xie/glip/portal"
 	"io"
 	"os/exec"
+	"strings"
 )
 
 // Board is capable of both reading and writing to the system clipboard.
@@ -19,9 +20,23 @@ type Board struct {
 // portal.Portals.
 func MakeBoard(copyCmd, pasteCmd *exec.Cmd) *Board {
 	return &Board{
-		CopyPortal:  portal.New(copyCmd, "copy"),
-		PastePortal: portal.New(pasteCmd, "paste"),
+		CopyPortal:  portal.MakeFrom(copyCmd),
+		PastePortal: portal.MakeFrom(pasteCmd),
 	}
+}
+
+//////////////////////////
+// Error handling
+//////////////////////////
+
+// IsReadable determines if clipboard data can be read using Board.
+func (b *Board) IsReadable() bool {
+	return b.PastePortal != nil
+}
+
+// IsWriteable determines if clipboard data can be written using board.
+func (b *Board) IsWriteable() bool {
+	return b.CopyPortal != nil
 }
 
 //////////////////////////
@@ -30,21 +45,40 @@ func MakeBoard(copyCmd, pasteCmd *exec.Cmd) *Board {
 
 // Read reads data from the system clipboard into "p".
 func (b *Board) Read(p []byte) (n int, err error) {
-	return b.PastePortal.Read(p)
+	if !b.IsReadable() {
+		return 0, ErrNotReadable
+	}
+
+	if n, err = b.PastePortal.Read(p); err != nil {
+		return n, fmt.Errorf("glip: could not read from PastePortal: %v", err)
+	}
+	return n, nil
 }
 
 // ReadString reads the contents of the system clipboard into a string.
 func (b *Board) ReadString() (s string, err error) {
-	buf := new(bytes.Buffer)
-	if _, err = b.WriteTo(buf); err != nil {
-		return "", err
+	if !b.IsReadable() {
+		return "", ErrNotReadable
 	}
-	return buf.String(), err
+
+	builder := new(strings.Builder)
+	if _, err = b.WriteTo(builder); err != nil {
+		return "", fmt.Errorf("glip: could not write to buffer: %v", err)
+	}
+
+	return builder.String(), nil
 }
 
 // WriteTo writes data from the system clipboard into the provided io.Writer.
 func (b *Board) WriteTo(w io.Writer) (n int64, err error) {
-	return b.PastePortal.WriteTo(w)
+	if !b.IsReadable() {
+		return 0, ErrNotReadable
+	}
+
+	if n, err = b.PastePortal.WriteTo(w); err != nil {
+		return n, fmt.Errorf("glip: could not write to PastePortal: %v", err)
+	}
+	return n, nil
 }
 
 //////////////////////////
@@ -53,15 +87,36 @@ func (b *Board) WriteTo(w io.Writer) (n int64, err error) {
 
 // Write copies data from "p" into the system clipboard.
 func (b *Board) Write(p []byte) (n int, err error) {
-	return b.CopyPortal.Write(p)
+	if !b.IsWriteable() {
+		return 0, ErrNotWriteable
+	}
+
+	if n, err = b.CopyPortal.Write(p); err != nil {
+		return n, copyWriteErr(err)
+	}
+	return n, nil
 }
 
 // WriteString writes the provided string into the system clipboard.
 func (b *Board) WriteString(s string) (n int, err error) {
-	return b.CopyPortal.Write([]byte(s))
+	if !b.IsWriteable() {
+		return 0, ErrNotWriteable
+	}
+
+	if n, err = b.CopyPortal.Write([]byte(s)); err != nil {
+		return n, copyWriteErr(err)
+	}
+	return n, nil
 }
 
 // ReadFrom reads data from the provided io.Reader into the system clipboard.
-func (b *Board) ReadFrom(r io.Reader) (n int64, er error) {
-	return b.CopyPortal.ReadFrom(r)
+func (b *Board) ReadFrom(r io.Reader) (n int64, err error) {
+	if !b.IsWriteable() {
+		return 0, ErrNotWriteable
+	}
+
+	if n, err = b.CopyPortal.ReadFrom(r); err != nil {
+		return n, fmt.Errorf("glip: could not read from CopyPortal: %v", err)
+	}
+	return n, nil
 }

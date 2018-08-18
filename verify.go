@@ -9,7 +9,7 @@ import (
 // in system path.
 func verifyCommand(name string) error {
 	if _, err := exec.LookPath(name); err != nil {
-		return fmt.Errorf("could not find command with name: %s", name)
+		return fmt.Errorf("glip: could not find command with name: %s", name)
 	}
 	return nil
 }
