@@ -63,7 +63,7 @@ func (b *Board) ReadString() (s string, err error) {
 
 	builder := new(strings.Builder)
 	if _, err = b.WriteTo(builder); err != nil {
-		return "", fmt.Errorf("glip: could not write to buffer: %v", err)
+		return "", fmt.Errorf("glip: could not write to strings.Builder: %v", err)
 	}
 
 	return builder.String(), nil

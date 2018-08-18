@@ -5,16 +5,13 @@ import (
 	"github.com/steven-xie/glip"
 )
 
-func ExampleBoard() {
-	// Create a new glip.Board instance.
-	b, _ := glip.NewBoard()
-
+func Example() {
 	// Write a string into the clipboard.
-	b.WriteString("example string")
+	glip.WriteString("example string")
 
 	// Read the string back from the clipboard. We expect it to be the same as
 	// the input string.
-	out, _ := b.ReadString()
+	out, _ := glip.ReadString()
+
 	fmt.Println(out)
-	// Output: example string
 }
