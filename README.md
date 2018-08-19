@@ -3,8 +3,9 @@
 _A clipboard interface for Go, compatible with Windows, Mac OS X, and Linux._
 
 [![godoc: reference][godoc-img]][godoc]
-[![travis: build][travis-img]][travis]
 [![codecov: coverage][codecov-img]][codecov]
+[![travis: build][travis-img]][travis]
+[![appveyor: build][appveyor-img]][appveyor]
 
 ## Usage
 
@@ -74,3 +75,5 @@ command-line accessor.
 [travis-img]: https://travis-ci.org/steven-xie/glip.svg?branch=master
 [codecov]: https://codecov.io/gh/steven-xie/glip
 [codecov-img]: https://codecov.io/gh/steven-xie/glip/branch/master/graph/badge.svg
+[appveyor]: https://ci.appveyor.com/project/StevenXie/glip
+[appveyor-img]: https://ci.appveyor.com/api/projects/status/ntdxh30vlbo55da7?svg=true

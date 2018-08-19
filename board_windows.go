@@ -2,10 +2,7 @@
 
 package glip
 
-import (
-	"github.com/steven-xie/glip/portal"
-	"os/exec"
-)
+import "os/exec"
 
 // NewBoard creates a new Board, if all the necessary system commands ar
 // available.

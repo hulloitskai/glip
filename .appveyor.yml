@@ -1,0 +1,31 @@
+version: '{branch}-{build}'
+image:
+  - Visual Studio 2015
+  - Visual Studio 2017
+
+clone_depth: 5
+clone_folder: c:\gopath\src\github.com\steven-xie\glip
+
+environment:
+  GOPATH: c:\gopath
+
+stack: go 1.10
+
+platform:
+  - x86
+  - x64
+
+init:
+  - git config --global core.autocrlf input
+
+install:
+  - set PATH=C:\MinGW\bin;%PATH%
+  - echo %PATH%
+  - echo %GOPATH%
+  - go version
+  - go env
+
+build: off
+deploy: off
+
+test_script: mingw32-make test-race
