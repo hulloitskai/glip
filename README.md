@@ -49,8 +49,8 @@ is installed, it will be used to read from the system clipboard.
 
 ### Mac OS X:
 
-`glip` uses `pbcopy` and `pbpaste` commands on OS X; this has been available
-since 2005, so no compatibility worries here.
+`glip` uses `pbcopy` and `pbpaste` commands on OS X; these commands have been
+available since 2005, so no compatibility worries here.
 
 ### Linux:
 

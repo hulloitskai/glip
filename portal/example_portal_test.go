@@ -5,10 +5,11 @@ import (
 	"os"
 )
 
+const TestPhrase = "Hello Portal!"
+
 func ExamplePortal() {
-	const in = "Hellooooooo"
-	p := portal.New("echo", in)
+	p := portal.New("echo", TestPhrase)
 
 	p.WriteTo(os.Stdout)
-	// Output: Hellooooooo
+	// Output: Hello Portal!
 }
