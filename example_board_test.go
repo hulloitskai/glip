@@ -1,3 +1,5 @@
+// +build !windows
+
 package glip_test
 
 import (
@@ -15,6 +17,7 @@ func ExampleBoard() {
 	// Read the string back from the clipboard. We expect it to be the same as
 	// the input string.
 	out, _ := b.ReadString()
+
 	fmt.Println(out)
 	// Output: example string
 }

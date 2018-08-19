@@ -8,7 +8,6 @@ git:
   depth: 3
 
 os:
-  - linux
   - osx
 
 ## Testing configuration...
