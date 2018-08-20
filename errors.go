@@ -20,3 +20,7 @@ var (
 func copyWriteErr(err error) error {
 	return fmt.Errorf("glip: could not write to CopyPortal: %v", err)
 }
+
+func verifyCmdErr(err error) error {
+	return fmt.Errorf("glip: error while verifying command existence: %v", err)
+}

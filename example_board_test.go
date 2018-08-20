@@ -8,7 +8,7 @@ import (
 )
 
 func ExampleBoard() {
-	// Create a new glip.Board instance.
+	// Make a new glip.Board instance.
 	b, _ := glip.NewBoard()
 
 	// Write a string into the clipboard.

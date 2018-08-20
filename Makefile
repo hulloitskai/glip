@@ -38,7 +38,7 @@ build:
 		if [ -n "$$GOBUILD_OUT" ]; then \
 		  echo "\n[ERROR] Failed to build program:"; \
 		  echo $$GOBUILD_OUT; \
-		  return 1; \
+		  exit 1; \
 		else echo "done."; \
 		fi
 
@@ -48,7 +48,7 @@ install:
 		if [ -n "$$GOBUILD_OUT" ]; then \
 		  echo "\n[ERROR] failed to install:"; \
 		  echo "$$GOINSTALL_OUT"; \
-		  return 1; \
+		  exit 1; \
 		else echo "done."; \
 		fi
 
@@ -60,7 +60,7 @@ get:
 		if [ -n "$$GOGET_OUT" ]; then \
 		  echo "\n[ERROR] Failed to install package dependencies:"; \
 		  echo "$$GOGET_OUT"; \
-		  return 1; \
+		  exit 1; \
 		else echo "done."; \
 		fi
 
@@ -71,7 +71,7 @@ update:
 			if [ -n "$$GOGET_OUT" ]; then \
 		  echo "\n[ERROR] Failed to install package dependencies:"; \
 		  echo "$$GOGET_OUT"; \
-		  return 1; \
+		  exit 1; \
 		else echo "done."; \
 		fi
 
@@ -93,7 +93,7 @@ check:
 		  echo '\n[WARN] Fix formatting issues in the following files with \
 "make fmt":'; \
 		  echo "$$GOFMT_OUT\n"; \
-		  return 1; \
+		  exit 1; \
 		else echo "ok"; \
 		fi
 ## Lint files...
@@ -105,7 +105,7 @@ check:
 		    echo "$$PKG"; \
 		  done; \
 		  printf "\n"; \
-		  return 1; \
+		  exit 1; \
 		else echo "ok"; \
 		fi
 ## Check suspicious code...
@@ -114,7 +114,7 @@ check:
 		if [ -n "$$GOVET_OUT" ]; then \
 		  echo '\n[WARN] Fix suspicious code from "go vet":'; \
 		  echo "$$GOVET_OUT\n"; \
-		  return 1; \
+		  exit 1; \
 		else echo "ok"; \
 		fi
 
@@ -124,7 +124,7 @@ fmt:
 	@GOFMT_OUT="$$(gofmt -l -s -w $(SRC_FILES) 2>&1)"; \
 	 if [ -n "$$GOFMT_OUT" ]; then \
 	 	printf "\n$$GOFT_OUT\n"; \
-	 	return 1; \
+	 	exit 1; \
 	 else echo "ok"; \
      fi;
 
