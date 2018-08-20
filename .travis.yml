@@ -17,7 +17,7 @@ before_install:
 
 install: go get -t ./...
 
-script: make review-race
+script: make review-race-v
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

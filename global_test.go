@@ -35,6 +35,6 @@ func TestGlobal(t *testing.T) {
 	}
 
 	if outstr := outbuf.String(); outstr != instr {
-		t.Fatalf("Expected output of \"%s\", instead got: \"%s\"", instr, outstr)
+		t.Fatalf("Expected output of \"%s\", instead got: \"%q\"", instr, outstr)
 	}
 }

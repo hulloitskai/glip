@@ -7,10 +7,11 @@ func NewBoard() (b *Board, err error) {
 	var (
 		copyCBs = []cmdBuilder{
 			newCmdBuilder("clip"),
-			newCmdBuilder("powershell", "-c", "Set-Clipboard"),
+			newCmdBuilder("PowerShell", "-Command", "Set-Clipboard"),
 		}
 		pasteCBs = []cmdBuilder{
-			newCmdBuilder("powershell", "-c", "Get-Clipboard"),
+			newCmdBuilder("PowerShell", "-Command", "Get-Clipboard", "-Format",
+				"Text", "-Raw", "|", "Write-Host", "-NoNewline"),
 			newCmdBuilder("paste"),
 		}
 	)

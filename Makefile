@@ -78,10 +78,13 @@ update:
 
 ## Formats, checks, and tests the code.
 review: fmt check test
+review-v: fmt check test-v
 ## Like "review", but tests for race conditions.
 review-race: fmt check test-race
+review-race-v: fmt check test-race-v
 ## Like "review-race", but includes benchmarks.
-review-bench: fmt check test-race bench
+review-bench: review-race bench
+review-bench-v: review-race bench-v
 
 
 ## Checks for formatting, linting, and suspicious code.
@@ -138,9 +141,19 @@ test:
 test-v:
 	@echo "Testing (verbose):"
 	@$(GOTEST) -v
+
+GOTEST_RACE = $(GOTEST) -race
 test-race:
 	@echo "Testing (race):"
-	@$(GOTEST) -race
+	@$(GOTEST_RACE)
+test-race-v:
+	@echo "Testing (race, verbose):"
+	@$(GOTEST_RACE) -v
+
+GOBENCH = $(GOTEST) ./... -run=^$ -bench=. -benchmem
 bench:
-	@echo "Benchmarking..."
-	@go test ./... -run=^$ -bench=. -benchmem
+	@echo "Benchmarking:"
+	@$(GOBENCH)
+bench-v:
+	@echo "Benchmarking (verbose):"
+	@$(GOBENCH) -v

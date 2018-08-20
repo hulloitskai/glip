@@ -76,4 +76,4 @@ command-line accessor.
 [codecov]: https://codecov.io/gh/steven-xie/glip
 [codecov-img]: https://codecov.io/gh/steven-xie/glip/branch/master/graph/badge.svg
 [appveyor]: https://ci.appveyor.com/project/StevenXie/glip
-[appveyor-img]: https://ci.appveyor.com/api/projects/status/ntdxh30vlbo55da7?svg=true
+[appveyor-img]: https://ci.appveyor.com/api/projects/status/ntdxh30vlbo55da7/branch/master?svg=true
