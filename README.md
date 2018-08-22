@@ -59,8 +59,6 @@ Linux (since there's no built-in clipboard interface). `glip` will choose one
 of those two programs automatically, unless you build a custom board with the
 `NewLinuxBoard` function.
 
-_`glip` has not been tested yet on Linux!_
-
 <br />
 
 ## glipboard
