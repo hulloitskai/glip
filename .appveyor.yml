@@ -19,6 +19,9 @@ init:
   - git config --global core.autocrlf input
 
 install:
+  # Install code linting tools.
+  - go get -u golang.org/x/lint/golint
+    # Configure Cygwin, which can run Makefiles.
   - set PATH=C:\cygwin\bin;%PATH%
   - echo %GOPATH%
   - go version
@@ -27,4 +30,4 @@ install:
 build: off
 deploy: off
 
-test_script: make test-race-v
+test_script: make review-race-v
