@@ -1,5 +1,3 @@
-// +build !windows
-
 package glip_test
 
 import (
@@ -112,7 +110,7 @@ func makeBoard(t *testing.T) *glip.Board {
 
 func checkResult(out string, t *testing.T) {
 	if out != TestPhrase {
-		t.Errorf("Expected output to equal input (\"%s\"), instead got: \"%s\"",
+		t.Errorf("Expected output to equal input (\"%s\"), instead got: \"%q\"",
 			TestPhrase, out)
 	}
 }

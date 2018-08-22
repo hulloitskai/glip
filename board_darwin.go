@@ -2,24 +2,12 @@
 
 package glip
 
-import "os/exec"
-
 // NewBoard creates a new Board, if all the necessary system commands ar
 // available.
 func NewBoard() (b *Board, err error) {
-	const (
-		copyCmdName  = "pbcopy"
-		pasteCmdName = "pbpaste"
+	var (
+		copyCBs  = []cmdBuilder{newCmdBuilder("pbcopy")}
+		pasteCBs = []cmdBuilder{newCmdBuilder("pbpaste")}
 	)
-
-	// Verify availability of system commands...
-	if err = verifyCommands(copyCmdName, pasteCmdName); err != nil {
-		return nil, err
-	}
-
-	b = MakeBoard(
-		exec.Command(copyCmdName),
-		exec.Command(pasteCmdName),
-	)
-	return b, nil
+	return makeBoardFromPossibleCBs(copyCBs, pasteCBs)
 }
