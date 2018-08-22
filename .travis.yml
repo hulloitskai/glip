@@ -9,15 +9,26 @@ git:
 
 os:
   - osx
+  - linux
 
-## Testing configuration
+## Install dependencies and code review tools
 before_install:
-  # - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  # Required for auto-linting Go code.
   - go get -u golang.org/x/lint/golint
+    # Required for tests on Linux.
+  - if [ "$TRAVIS_OS_NAME" == "linux" ];
+    then sudo apt-get install xclip;
+    fi
 
-install: go get -t ./...
+install:
+  # Install all sub-packages; include tests.
+  - go get -t ./...
 
-script: make review-race-v
+script: |
+  if [ "$TRAVIS_OS_NAME" == "osx" ];
+  then make review-race-v;
+  else xvfb-run make review-race-v; # Imitate an display on Linux
+  fi
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
