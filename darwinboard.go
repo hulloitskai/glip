@@ -1,3 +1,5 @@
+// +build darwin
+
 package glip
 
 // DarwinBoard is capable of interacting with the macOS clipboard ("pasteboard")

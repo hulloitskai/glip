@@ -32,6 +32,12 @@ type Xclip struct {
 	// environment variable.
 	Display string
 
+	// Quiet represents Xclip's "-quiet" flag. It is true by default.
+	//
+	// When set, Xclip shows informational messages on the terminal and runs
+	// in the foreground.
+	Quiet bool
+
 	*dynPortal
 }
 
@@ -50,7 +56,10 @@ func NewXclipSelection(sel XSelection) (x *Xclip, err error) {
 		return nil, err
 	}
 
-	x = &Xclip{dynPortal: newDynPortal("xclip"), Selection: sel}
+	x = &Xclip{
+		dynPortal: newDynPortal("xclip"),
+		Selection: sel,
+	}
 	x.GetArgs = x.generateArgs
 	return x, nil
 }
@@ -58,8 +67,8 @@ func NewXclipSelection(sel XSelection) (x *Xclip, err error) {
 func (x *Xclip) generateArgs() []string {
 	args := []string{"-sel", string(x.Selection)}
 
-	if x.Filter {
-		args = append(args, "-filter")
+	if x.Quiet {
+		args = append(args, "-quiet")
 	}
 	if x.Loops != 0 {
 		args = append(args, "-loops", strconv.FormatUint(uint64(x.Loops), 10))
@@ -73,14 +82,44 @@ func (x *Xclip) generateArgs() []string {
 
 const xclipOutFlag = "-out"
 
-// Write writes data to an X selection.
-func (x *Xclip) Write(data []byte) (n int, err error) {
+// Read reads data to an X selection.
+func (x *Xclip) Read(src []byte) (n int, err error) {
 	x.AppendArgs(xclipOutFlag)
-	return x.dynPortal.Write(data)
+	return x.dynPortal.Read(src)
+}
+
+// WriteTo writes data from an X selection into an io.Writer.
+func (x *Xclip) WriteTo(w io.Writer) (n int64, err error) {
+	x.AppendArgs(xclipOutFlag)
+	return x.dynPortal.WriteTo(w)
+}
+
+// ReadString reads data from an X selection as a string.
+func (x *Xclip) ReadString() (s string, err error) {
+	x.AppendArgs(xclipOutFlag)
+	return x.dynPortal.ReadString()
+}
+
+func (x *Xclip) setFilterFlag() {
+	if x.Filter {
+		x.AppendArgs("-filter")
+	}
+}
+
+// Write writes len(p) bytes into an X selection.
+func (x *Xclip) Write(p []byte) (n int, err error) {
+	x.setFilterFlag()
+	return x.dynPortal.Write(p)
+}
+
+// WriteString writes a string into an X selection.
+func (x *Xclip) WriteString(s string) (n int, err error) {
+	x.setFilterFlag()
+	return x.dynPortal.WriteString(s)
 }
 
 // ReadFrom reads data from an io.Reader into an X selection.
 func (x *Xclip) ReadFrom(r io.Reader) (n int64, err error) {
-	x.AppendArgs(xclipOutFlag)
+	x.setFilterFlag()
 	return x.dynPortal.ReadFrom(r)
 }

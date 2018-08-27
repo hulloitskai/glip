@@ -18,7 +18,7 @@ func newDualBoard(writer, reader *dynPortal) *dualBoard {
 	return &dualBoard{Writer: writer, Reader: reader}
 }
 
-// Write writes data into the system clipboar.
+// Write writes data into the system clipboard.
 func (db *dualBoard) Write(data []byte) (n int, err error) {
 	return db.Writer.Write(data)
 }

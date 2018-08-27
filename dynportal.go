@@ -13,8 +13,7 @@ import (
 // dynPortal's arguments are retrieved through GetArgs, and are set for the
 // duration of Write, WriteTo, Read, and ReadFrom. They are reset to the
 // arguments dynPortal was constructed with at the end of the aforementioned
-// IO methods; that is, arguments set by SetArgs will not persist after
-// running the aforementioned IO methods.
+// IO methods.
 type dynPortal struct {
 	*portal.Portal
 	GetArgs func() []string

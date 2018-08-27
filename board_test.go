@@ -3,13 +3,17 @@ package glip_test
 import (
 	"bytes"
 	"github.com/steven-xie/glip"
+	"reflect"
 	"testing"
 )
 
 const TestPhrase = "Hello, clipboard!"
 
-func TestBoard_basic(t *testing.T) {
+func TestBoard(t *testing.T) {
 	b := makeBoard(t)
+
+	t.Logf("Made a Board, with an underlying type of: %q",
+		reflect.TypeOf(b).Elem().Name())
 
 	if _, err := b.WriteString(TestPhrase); err != nil {
 		writeBoardErr(err, t)
@@ -96,7 +100,7 @@ func makeBoard(t *testing.T) glip.Board {
 
 func checkResult(out string, t *testing.T) {
 	if out != TestPhrase {
-		t.Errorf("Expected output to equal input (\"%s\"), instead got: \"%q\"",
+		t.Errorf("Expected output to equal input (\"%s\"), instead got: %q",
 			TestPhrase, out)
 	}
 }

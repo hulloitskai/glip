@@ -1,6 +1,6 @@
-package glip
+// +build windows
 
-import "github.com/steven-xie/glip/portal"
+package glip
 
 // PShellBoard is capable of interacting with the Windows clipboard using
 // the "Get-Clipboard" and "Set-Clipboard" PowerShell cmdlets.
@@ -58,11 +58,6 @@ const (
 	PSBCsvType                           = "CommaSeparatedValue"
 )
 
-// cmdletPortal makes a portal.Portal from a PowerShell cmdlet.
-func cmdletPortal(name string) *portal.Portal {
-	return portal.New("PowerShell", "-Command", name)
-}
-
 // NewPShellBoard creates a new PShellBoard with zeroed (default) flag options,
 // if its underlying programs can be found in the system path.
 func NewPShellBoard() (psb *PShellBoard, err error) {
@@ -71,15 +66,20 @@ func NewPShellBoard() (psb *PShellBoard, err error) {
 	}
 
 	ps := &PShellBoard{
-		dualBoard: &dualBoard{
-			Writer: newDynPortal("Set-Clipboard"),
-			Reader: newDynPortal("Get-Clipboard"),
-		},
+		dualBoard: newDualBoard(
+			cmdletPortal("$INPUT | Set-Clipboard"),
+			cmdletPortal("Get-Clipboard"),
+		),
 	}
 
 	ps.Writer.GetArgs = ps.generateWriterArgs
 	ps.Reader.GetArgs = ps.generateReaderArgs
 	return ps, nil
+}
+
+// cmdletPortal makes a dynPortal from a PowerShell cmdlet.
+func cmdletPortal(name string) *dynPortal {
+	return newDynPortal("PowerShell", "-Command", name)
 }
 
 func (psb *PShellBoard) generateReaderArgs() []string {
@@ -95,6 +95,7 @@ func (psb *PShellBoard) generateReaderArgs() []string {
 		args = append(args, "-TextFormatType", string(psb.TextFormatType))
 	}
 
+	args = append(args, "|", "Write-Host", "-NoNewline")
 	return args
 }
 
