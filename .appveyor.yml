@@ -9,7 +9,7 @@ clone_folder: C:\gopath\src\github.com\steven-xie\glip
 environment:
   GOPATH: C:\gopath
 
-stack: go 1.10
+stack: go 1.10, go 1.11, go
 
 platform:
   - x86
