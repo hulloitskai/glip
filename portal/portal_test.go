@@ -15,16 +15,19 @@ var (
 func TestPortal(t *testing.T) {
 	var (
 		echoCmd    = exec.Command("echo", TestPhrase)
-		echoPortal = portal.MakeFrom(echoCmd)
+		echoPortal = portal.NewFrom(echoCmd)
 	)
 
-	if echoPortal.Path != "" {
-		t.Fatalf("Expected new portal to begin with an empty Cmd field (with an "+
-			"empty Path), but found echoPortal.Cmd to be: %#v", echoPortal.Cmd)
-	}
-
-	echoPortal.Prepare()
 	if !echoPortal.IsReady() {
 		t.Fatal("Expected prepared portal to be ready for execution.")
+	}
+
+	if err := echoPortal.Run(); err != nil {
+		t.Fatalf("Got an error while running portal: %v", err)
+	}
+
+	if echoPortal.IsReady() {
+		t.Fatal("Expected portal to require reloading before it is ready after " +
+			"running.")
 	}
 }

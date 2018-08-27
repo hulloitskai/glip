@@ -1,3 +1,5 @@
+// +build ignore
+
 package glip_test
 
 import (

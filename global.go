@@ -8,7 +8,7 @@ import (
 // global is a package-wide Board instance, initialized upon package import. If
 // the package encountered an error while initializing the global instance,
 // it will instead be nil.
-var global *Board
+var global Board
 
 func init() {
 	var err error
@@ -16,10 +16,6 @@ func init() {
 		global = nil
 	}
 }
-
-////////////////////////////
-// Reading from Global
-////////////////////////////
 
 // checkGlobal returns an error if "global" is nil.
 func checkGlobal() error {
@@ -29,6 +25,10 @@ func checkGlobal() error {
 	}
 	return nil
 }
+
+////////////////////////////
+// Reading from Global
+////////////////////////////
 
 // Read saves data from the system clipboard into the write array, "p".
 func Read(p []byte) (n int, err error) {

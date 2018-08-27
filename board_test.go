@@ -8,20 +8,6 @@ import (
 
 const TestPhrase = "Hello, clipboard!"
 
-func TestBoard_safety(t *testing.T) {
-	b := makeBoard(t)
-
-	b.CopyPortal = nil
-	if b.IsWriteable() {
-		t.Error("Board should not be writeable with a nil CopyPortal")
-	}
-
-	b.PastePortal = nil
-	if b.IsReadable() {
-		t.Error("Board should not be readable with a nil PastePortal")
-	}
-}
-
 func TestBoard_basic(t *testing.T) {
 	b := makeBoard(t)
 
@@ -100,10 +86,10 @@ func TestBoard_WriteTo(t *testing.T) {
 	checkResult(outbuf.String(), t)
 }
 
-func makeBoard(t *testing.T) *glip.Board {
+func makeBoard(t *testing.T) glip.Board {
 	b, err := glip.NewBoard()
 	if err != nil {
-		t.Fatal("Failed to instantiate a new Board:", err)
+		t.Fatal(err)
 	}
 	return b
 }

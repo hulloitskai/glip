@@ -5,10 +5,9 @@ import (
 	"io"
 )
 
-// Write allows for the writing of data into a command's standard input.
-func (p *Portal) Write(src []byte) (n int, err error) {
-	// Prepare a fresh "Cmd" from "blueprint".
-	p.Prepare()
+// Write allows for the writing of data into Portal's standard input.
+func (p *Portal) Write(data []byte) (n int, err error) {
+	defer p.Reload()
 
 	// Open a pipe to program Stdin.
 	in, err := p.StdinPipe()
@@ -16,11 +15,11 @@ func (p *Portal) Write(src []byte) (n int, err error) {
 		return 0, stdinPipeErr(err)
 	}
 
-	// Start program; begin writing to it's Stdin from "src".
+	// Start program; begin writing to it's Stdin from data.
 	if err = p.Start(); err != nil {
 		return 0, startErr(err)
 	}
-	if n, err = in.Write(src); err != nil {
+	if n, err = in.Write(data); err != nil {
 		return n, fmt.Errorf("portal: could not write to Stdin: %v", err)
 	}
 
@@ -36,11 +35,10 @@ func (p *Portal) Write(src []byte) (n int, err error) {
 	return n, err
 }
 
-// ReadFrom allows for the piping of data from a io.Writer into a command's
-// standard output.
+// ReadFrom allows for the piping of data from a io.Reader into Portal's
+// standard input.
 func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
-	// Prepare a fresh "Cmd" from "blueprint".
-	p.Prepare()
+	defer p.Reload()
 
 	// Open a pipe to Stdin.
 	in, err := p.StdinPipe()
