@@ -47,6 +47,7 @@ func (dp *dynPortal) Write(p []byte) (n int, err error) {
 	return dp.Portal.Write(p)
 }
 
+// WriteString writes a string to dynPortal's standard input.
 func (dp *dynPortal) WriteString(s string) (n int, err error) {
 	return dp.Write([]byte(s))
 }
