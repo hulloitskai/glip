@@ -9,18 +9,18 @@ import (
 func (p *Portal) Read(dst []byte) (n int, err error) {
 	defer p.Reload()
 
-	// Open an pipe to stdout.
+	// Open an pipe to Stdout.
 	out, err := p.stdoutPipe()
 	if err != nil {
 		return 0, err
+	}
+	if n, err = out.Read(dst); err != nil {
+		return n, fmt.Errorf("portal: error while reading from Stdout: %v", err)
 	}
 
 	// Start p.Cmd; read data to destination.
 	if err = p.start(); err != nil {
 		return 0, err
-	}
-	if n, err = out.Read(dst); err != nil {
-		return n, fmt.Errorf("portal: error while reading from stdout: %v", err)
 	}
 
 	// Wait for p.Cmd to complete.
@@ -31,18 +31,18 @@ func (p *Portal) Read(dst []byte) (n int, err error) {
 func (p *Portal) WriteTo(w io.Writer) (n int64, err error) {
 	defer p.Reload()
 
-	// Open a pipe to stdout.
+	// Open a pipe to Stdout.
 	out, err := p.stdoutPipe()
 	if err != nil {
 		return 0, err
 	}
+	if n, err = io.Copy(w, out); err != nil {
+		return n, fmt.Errorf("portal: error while copying from Stdout: %v", err)
+	}
 
-	// Start p.Cmd; copy data from program stdout to the provided io.Writer.
+	// Start p.Cmd; copy data from program Stdout to the provided io.Writer.
 	if err = p.start(); err != nil {
 		return 0, err
-	}
-	if n, err = io.Copy(w, out); err != nil {
-		return n, fmt.Errorf("portal: error while copying from stdout: %v", err)
 	}
 
 	// Wait for p.Cmd to complete.
