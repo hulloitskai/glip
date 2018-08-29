@@ -10,9 +10,9 @@ func (p *Portal) Write(data []byte) (n int, err error) {
 	defer p.Reload()
 
 	// Open a pipe to Stdin.
-	in, err := p.stdinPipe()
+	in, err := p.StdinPipe()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("portal: error during StdinPipe: %v", err)
 	}
 
 	// Asynchronously write to Stdin.
@@ -20,8 +20,8 @@ func (p *Portal) Write(data []byte) (n int, err error) {
 	go asyncWrite(in, data, ch)
 
 	// Start Cmd.
-	if err = p.start(); err != nil {
-		return 0, err
+	if err = p.Start(); err != nil {
+		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
 	res := <-ch
@@ -36,7 +36,10 @@ func (p *Portal) Write(data []byte) (n int, err error) {
 	}
 
 	// Wait for the program to exit.
-	return n, p.wait()
+	if err = p.Wait(); err != nil {
+		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
+	}
+	return n, nil
 }
 
 // ReadFrom reads data from an io.Reader into the Portal.
@@ -44,9 +47,9 @@ func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 	defer p.Reload()
 
 	// Open a pipe to program stdin.
-	in, err := p.stdinPipe()
+	in, err := p.StdinPipe()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("portal: error during StdinPipe: %v", err)
 	}
 
 	// Asynchronously copy data from r into program stdin.
@@ -54,8 +57,8 @@ func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 	go asyncCopy(in, r, ch)
 
 	// Start the program.
-	if err = p.start(); err != nil {
-		return 0, err
+	if err = p.Start(); err != nil {
+		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
 	// Receive results of asynchronous copy.
@@ -71,5 +74,8 @@ func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 	}
 
 	// Wait for program to exit.
-	return n, p.wait()
+	if err = p.Wait(); err != nil {
+		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
+	}
+	return n, nil
 }

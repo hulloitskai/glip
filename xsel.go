@@ -2,9 +2,7 @@
 
 package glip
 
-import (
-	"io"
-)
+import "io"
 
 // Xsel is an API wrapper capable of interfacing with the Xsel Linux program.
 //

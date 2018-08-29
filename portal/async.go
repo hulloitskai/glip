@@ -40,7 +40,7 @@ func asyncWrite(w io.Writer, p []byte, res chan iores) {
 	if err != nil {
 		res <- iores{
 			n:   0,
-			err: fmt.Errorf("portal: error during asyncrhonous write: %v", err),
+			err: fmt.Errorf("portal: error during asynchronous write: %v", err),
 		}
 	}
 
@@ -53,7 +53,7 @@ func asyncRead(r io.Reader, dst []byte, res chan iores) {
 	if err != nil {
 		res <- iores{
 			n:   0,
-			err: fmt.Errorf("portal: error during asyncrhonous read: %v", err),
+			err: fmt.Errorf("portal: error during asynchronous read: %v", err),
 		}
 	}
 
