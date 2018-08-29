@@ -1,9 +1,6 @@
 package portal
 
-import (
-	"fmt"
-	"io"
-)
+import "io"
 
 // Read reads len(dst) of data from the Portal into dst.
 func (p *Portal) Read(dst []byte) (n int, err error) {
@@ -14,16 +11,24 @@ func (p *Portal) Read(dst []byte) (n int, err error) {
 	if err != nil {
 		return 0, err
 	}
-	if n, err = out.Read(dst); err != nil {
-		return n, fmt.Errorf("portal: error while reading from Stdout: %v", err)
-	}
 
-	// Start p.Cmd; read data to destination.
+	// Asynchronously read from Stdout to dst.
+	ch := make(chan iores)
+	go asyncRead(out, dst, ch)
+
+	// Start Cmd.
 	if err = p.start(); err != nil {
 		return 0, err
 	}
 
-	// Wait for p.Cmd to complete.
+	// Receive results of read operation.
+	res := <-ch
+	if res.err != nil {
+		return 0, res.err
+	}
+	n = res.n
+
+	// Wait for Cmd to complete.
 	return n, p.wait()
 }
 
@@ -36,15 +41,23 @@ func (p *Portal) WriteTo(w io.Writer) (n int64, err error) {
 	if err != nil {
 		return 0, err
 	}
-	if n, err = io.Copy(w, out); err != nil {
-		return n, fmt.Errorf("portal: error while copying from Stdout: %v", err)
-	}
 
-	// Start p.Cmd; copy data from program Stdout to the provided io.Writer.
+	// Asynchronously copy data from Stdout into w.
+	ch := make(chan iores64)
+	go asyncCopy(w, out, ch)
+
+	// Start Cmd.
 	if err = p.start(); err != nil {
 		return 0, err
 	}
 
-	// Wait for p.Cmd to complete.
+	// Receive results of copy operation.
+	res := <-ch
+	if res.err != nil {
+		return 0, res.err
+	}
+	n = res.n
+
+	// Wait for Cmd to exit.
 	return n, p.wait()
 }

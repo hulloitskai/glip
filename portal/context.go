@@ -34,3 +34,10 @@ func (p *Portal) wait() error {
 	}
 	return nil
 }
+
+func (p *Portal) run() error {
+	if err := p.Run(); err != nil {
+		return fmt.Errorf("portal: error while running Cmd: %v", err)
+	}
+	return nil
+}
