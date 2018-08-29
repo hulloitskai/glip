@@ -2,8 +2,6 @@
 
 package glip
 
-import "github.com/steven-xie/glip/portal"
-
 // XSelection is a string that represents a particular X selection (a
 // clipboard data source that can be written to / read from).
 type XSelection string
@@ -15,10 +13,3 @@ const (
 	XSSecondary            = "secondary" // also known as XA_SECONDARY
 	XSClipboard            = "clipboard" // also known as XA_CLIPBOARD
 )
-
-// xselapp is the base structure for an application that interacts with X
-// selections.
-type xselapp struct {
-	*portal.Portal
-	sel XSelection
-}

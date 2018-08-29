@@ -36,7 +36,7 @@ func (dp *dynPortal) AppendArgs(args ...string) {
 }
 
 // preflight is run before dynPortal's IO methods, to set its temporary
-// argumentsits using GetArgs.
+// arguments using GetArgs.
 func (dp *dynPortal) preflight() {
 	dp.AppendArgs(dp.GetArgs()...)
 }

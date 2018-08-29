@@ -2,6 +2,10 @@
 
 package glip
 
+import (
+	"io"
+)
+
 // Xsel is an API wrapper capable of interfacing with the Xsel Linux program.
 //
 // Read more about the Xsel program at https://linux.die.net/man/1/xsel.
@@ -74,8 +78,25 @@ func (x *Xsel) Delete() error {
 	return x.Run()
 }
 
-// ReadString reads data from Xsel's target selection as a string.
-func (x *Xsel) ReadString() (s string, err error) {
-	x.AppendArgs("--output")
-	return x.dynPortal.ReadString()
+// setInputFlag enables Xsel's "--input" flag.
+func (x *Xsel) setInputFlag() {
+	x.AppendArgs("--input")
+}
+
+// Write writes len(p) bytes into Xsel's target selection.
+func (x *Xsel) Write(p []byte) (n int, err error) {
+	x.setInputFlag()
+	return x.dynPortal.Write(p)
+}
+
+// WriteString writes a string into Xsel's target selection.
+func (x *Xsel) WriteString(s string) (n int, err error) {
+	x.setInputFlag()
+	return x.dynPortal.WriteString(s)
+}
+
+// ReadFrom reads data from an io.Reader into Xsel's target selection.
+func (x *Xsel) ReadFrom(r io.Reader) (n int64, err error) {
+	x.setInputFlag()
+	return x.dynPortal.ReadFrom(r)
 }

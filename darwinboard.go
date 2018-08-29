@@ -31,11 +31,10 @@ const (
 	DPBFont            = "font"
 )
 
-// DPrefer represents the value of the "-Prefer" flag setting for the
-// "pbpaste" program.
+// DPrefer represents the value of the "-Prefer" flag setting for pbpaste.
 type DPrefer string
 
-// These are possible settings of the "-Prefer" flag for "pbpaste".
+// These are possible settings of the "-Prefer" flag for pbpaste.
 const (
 	PreferTxt DPrefer = "txt"
 	PreferRTF         = "rtf"

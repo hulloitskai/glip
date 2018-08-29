@@ -24,7 +24,7 @@ func init() {
 	}
 }
 
-// checkGlobal returns an error if "B" is nil.
+// checkGlobal returns an error if B, the package-wide Board, is nil.
 func checkGlobal() error {
 	if BErr != nil {
 		return fmt.Errorf("glip: failed to initialize package-wide Board "+
@@ -37,12 +37,12 @@ func checkGlobal() error {
 // Reading from B
 ////////////////////////////
 
-// Read saves data from the system clipboard into the write array, "p".
-func Read(p []byte) (n int, err error) {
+// Read reads len(dst) bytes from the system clipboard into dst.
+func Read(dst []byte) (n int, err error) {
 	if err = checkGlobal(); err != nil {
 		return 0, err
 	}
-	return B.Read(p)
+	return B.Read(dst)
 }
 
 // ReadString reads the contents of the system clipboard into a string.
@@ -53,7 +53,7 @@ func ReadString() (s string, err error) {
 	return B.ReadString()
 }
 
-// WriteTo writes data from the system clipboard into the given io.Writer.
+// WriteTo writes data from the system clipboard into an io.Writer.
 func WriteTo(w io.Writer) (n int64, err error) {
 	if err = checkGlobal(); err != nil {
 		return 0, err
@@ -65,12 +65,12 @@ func WriteTo(w io.Writer) (n int64, err error) {
 // Writing to B
 ////////////////////////////
 
-// Write records data from "p" into the system clipboard.
-func Write(p []byte) (n int, err error) {
+// Write writes len(dst) bytes into the system clipboard.
+func Write(dst []byte) (n int, err error) {
 	if err = checkGlobal(); err != nil {
 		return 0, err
 	}
-	return B.Write(p)
+	return B.Write(dst)
 }
 
 // WriteString writes a string into the system clipboard.
