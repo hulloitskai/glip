@@ -3,27 +3,17 @@ package glip_test
 import (
 	"bytes"
 	"github.com/steven-xie/glip"
+	"reflect"
 	"testing"
 )
 
 const TestPhrase = "Hello, clipboard!"
 
-func TestBoard_safety(t *testing.T) {
+func TestBoard(t *testing.T) {
 	b := makeBoard(t)
 
-	b.CopyPortal = nil
-	if b.IsWriteable() {
-		t.Error("Board should not be writeable with a nil CopyPortal")
-	}
-
-	b.PastePortal = nil
-	if b.IsReadable() {
-		t.Error("Board should not be readable with a nil PastePortal")
-	}
-}
-
-func TestBoard_basic(t *testing.T) {
-	b := makeBoard(t)
+	t.Logf("Made a Board, with an underlying type of: %q",
+		reflect.TypeOf(b).Elem().Name())
 
 	if _, err := b.WriteString(TestPhrase); err != nil {
 		writeBoardErr(err, t)
@@ -100,17 +90,17 @@ func TestBoard_WriteTo(t *testing.T) {
 	checkResult(outbuf.String(), t)
 }
 
-func makeBoard(t *testing.T) *glip.Board {
+func makeBoard(t *testing.T) glip.Board {
 	b, err := glip.NewBoard()
 	if err != nil {
-		t.Fatal("Failed to instantiate a new Board:", err)
+		t.Fatal(err)
 	}
 	return b
 }
 
 func checkResult(out string, t *testing.T) {
 	if out != TestPhrase {
-		t.Errorf("Expected output to equal input (\"%s\"), instead got: \"%q\"",
+		t.Errorf("Expected output to equal input (\"%s\"), instead got: %q",
 			TestPhrase, out)
 	}
 }

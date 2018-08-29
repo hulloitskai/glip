@@ -1,35 +1,40 @@
-// +build linux openbsd netbsd solaris
+// +build !darwin !windows
 
 package glip
 
-// NewBoard creates a new Board, if all the necessary system commands ar
-// available.
-func NewBoard() (b *Board, err error) {
-	var (
-		copyCBs = []cmdBuilder{
-			newCmdBuilder("xclip"),
-			newCmdBuilder("xsel"),
-		}
-		pasteCBs = []cmdBuilder{
-			newCmdBuilder("xclip", "-o"),
-			newCmdBuilder("xsel"),
-		}
-	)
-	return makeBoardFromPossibleCBs(copyCBs, pasteCBs)
-}
+import (
+	"fmt"
+	"runtime"
+)
 
-// NewBoardWith creates a new board targeting a specific system clipboard.
-func NewBoardWith(clipboard string) (b *Board, err error) {
-	xselCB := newCmdBuilder("xsel", "--", clipboard)
-	var (
-		copyCBs = []cmdBuilder{
-			newCmdBuilder("xclip", "-sel", clipboard),
-			xselCB,
-		}
-		pasteCBs = []cmdBuilder{
-			newCmdBuilder("xclip", "--sel", clipboard, "-o"),
-			xselCB,
-		}
+// NewBoard creates a new Board, using a program automatically selected based
+// on the operating system and available system commands.
+func NewBoard() (b Board, err error) {
+	const (
+		cmd1 = "xsel"
+		cmd2 = "xclip"
 	)
-	return makeBoardFromPossibleCBs(copyCBs, pasteCBs)
+
+	exists, err := cmdExists(cmd1)
+	exists, err = cmdExists(cmd2)
+	if err != nil {
+		return nil, fmt.Errorf("glip: could not check for program existence: %v",
+			err)
+	}
+	if !exists {
+		return nil, fmt.Errorf(
+			"glip: could not create Board on platform \"%s\", since neither "+
+				"programs \"%s\" nor \"%s\" can be found",
+			runtime.GOOS, cmd1, cmd2)
+	}
+
+	if b, err = NewXsel(); err == nil {
+		return b, nil
+	}
+
+	if b, err = NewXclip(); err != nil {
+		return nil, fmt.Errorf("could not create Board: %v", err)
+	}
+
+	return b, nil
 }

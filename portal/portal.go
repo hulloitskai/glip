@@ -12,23 +12,51 @@ type Portal struct {
 	blueprint *exec.Cmd
 }
 
-// New creates a new Portal using exec.Command internally.
+// New creates a new, unprepared Portal.
+//
+// It uses exec.Command internally to generate the command.
 func New(name string, args ...string) *Portal {
-	return MakeFrom(exec.Command(name, args...))
+	return NewFrom(exec.Command(name, args...))
 }
 
-// MakeFrom creates a Portal by wrapping exec.Cmd.
+// NewFrom creates a new, unprepared Portal by wrapping exec.Cmd.
 //
-// If "cmd" is nil, MakeFrom will return nil.
-func MakeFrom(cmd *exec.Cmd) *Portal {
+// If "cmd" is nil, NewFrom will return nil.
+func NewFrom(cmd *exec.Cmd) *Portal {
 	if cmd == nil {
 		return nil
 	}
-	return &Portal{blueprint: cmd}
+	return &Portal{Cmd: *cmd, blueprint: cmd}
 }
 
-// Restore loads Portal's exec.Cmd instance from an internal reference,
-// preparing it to perform a comamnd.
-func (p *Portal) Restore() {
+// Reload resets Portal's internal Cmd, preparing it for a new execution.
+//
+// Reload must be called before each execution of Portal's internal command.
+func (p *Portal) Reload() {
 	p.Cmd = *p.blueprint
+}
+
+// IsReady determines if the Portal has been "prepared" to be executed.
+//
+// If IsReady returns false, that means Portal's internal Cmd field is empty,
+// and will fail if started.
+func (p *Portal) IsReady() bool {
+	if p.ProcessState == nil {
+		return true
+	}
+	return !p.ProcessState.Exited()
+}
+
+// PersistentArgs gets the arguments of Portal's exec.Cmd blueprint.
+//
+// These arguments will persist between Portal command executions.
+func (p *Portal) PersistentArgs() []string {
+	return p.blueprint.Args
+}
+
+// SetPersistentArgs sets the arguments of Portal's exec.Cmd blueprint.
+//
+// These arguments will persist between Portal command executions.
+func (p *Portal) SetPersistentArgs(args []string) {
+	p.blueprint.Args = args
 }

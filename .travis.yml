@@ -2,6 +2,7 @@ language: go
 
 go:
   - '1.10'
+  - '1.11'
   - tip
 
 git:
@@ -16,8 +17,9 @@ before_install:
   # Required for auto-linting Go code.
   - go get -u golang.org/x/lint/golint
     # Required for tests on Linux.
-  - if [ "$TRAVIS_OS_NAME" == "linux" ];
-    then sudo apt-get install xclip;
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      sudo apt-get update;
+      sudo apt-get install xclip;
     fi
 
 install:
