@@ -73,3 +73,9 @@ func (x *Xsel) Delete() error {
 	x.AppendArgs("--delete")
 	return x.Run()
 }
+
+// ReadString reads data from Xsel's target selection as a string.
+func (x *Xsel) ReadString() (s string, err error) {
+	x.AppendArgs("--output")
+	return x.dynPortal.ReadString()
+}
