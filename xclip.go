@@ -82,7 +82,7 @@ func (x *Xclip) generateArgs() []string {
 
 const xclipOutFlag = "-out"
 
-// Read reads data to an X selection.
+// Read reads len(src) bytes from an X selection to src.
 func (x *Xclip) Read(src []byte) (n int, err error) {
 	x.AppendArgs(xclipOutFlag)
 	return x.dynPortal.Read(src)
