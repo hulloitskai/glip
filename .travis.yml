@@ -12,11 +12,17 @@ os:
   - osx
   - linux
 
-## Install dependencies and code review tools
+## Mark Go version 'tip' as an optional.
+matrix:
+  allow_failures:
+    - go: 'tip'
+  fast_finish: true
+
+## Install dependencies and code review tools.
 before_install:
-  # Required for auto-linting Go code.
+  ## Required for auto-linting Go code.
   - go get -u golang.org/x/lint/golint
-    # Required for tests on Linux.
+  ## Required for tests on Linux.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       sudo apt-get update;
       sudo apt-get install xclip;
@@ -29,7 +35,7 @@ install:
 script: |
   if [ "$TRAVIS_OS_NAME" == "osx" ];
   then make review-race-v;
-  else xvfb-run make review-race-v; # Imitate an display on Linux
+  else xvfb-run make review-race-v; # imitate an display on Linux
   fi
 
 after_success:
