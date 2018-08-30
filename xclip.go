@@ -9,7 +9,7 @@ import (
 
 // Xclip is an API wrapper capable of interfacing with the Xclip Linux program.
 //
-// Read more about this flag at https://linux.die.net/man/1/xclip.
+// Read more about this program at https://linux.die.net/man/1/xclip.
 type Xclip struct {
 	// Selection is Xclip's target selection.
 	Selection XSelection

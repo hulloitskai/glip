@@ -15,8 +15,8 @@ Install `glip` like you would any other Go package:
 go get github.com/steven-xie/glip
 ```
 
-Since a `glip.Board` (a clipboard interface) implements `io.Writer`,
-`io.Reader`, `io.WriterTo`, it can be used just about anywhere:
+Since a `glip.Board` (a clipboard interface) includes `io.Writer`, `io.Reader`,
+`io.WriterTo`, and `io.ReaderFrom`, it can be used just about anywhere:
 
 ```go
 import (
@@ -36,36 +36,44 @@ func main() {
 }
 ```
 
+### Advanced Usage:
+
+`glip` provides API-wrapping structs specific to each clipboard-accessing
+program; each struct implements the `Board` interface.
+
+If you know which specific program you would like to use, you can create a new
+instance of the associated wrapper struct (i.e. `PShellBoard`, `Clip`,
+`DarwinBoard`, `Xclip`, or `Xsel`), and set program-specific flags / options
+using the wrapper struct.
+
+<br />
+
 ## Compatibility
 
 ### Windows:
 
-`glip` uses the `clip` commands on Windows to write to the system clipboard.
-This is available _starting from Windows 7, and onwards_.
+`glip` uses the the PowerShell `Get-Clipboard` and `Set-Clipboard` cmdlets to
+read and write to the Windows clipboard. If PowerShell is not available, the
+`clip` command is used to write to the Windows clipboard.
 
-No native paste command is availble on Windows, but if
-[this third-party `paste` command](https://www.c3scripts.com/tutorials/msdos/paste.html)
-is installed, it will be used to read from the system clipboard.
+### macOS:
 
-### Mac OS X:
-
-`glip` uses `pbcopy` and `pbpaste` commands on OS X; these commands have been
-available since 2005, so no compatibility worries here.
+`glip` uses `pbcopy` and `pbpaste` commands on macOS.
 
 ### Linux:
 
 `glip` requires the _installation of either `xclip` or `xsel`_ to function on
-Linux (since there's no built-in clipboard interface). `glip` will choose one
-of those two programs automatically, unless you build a custom board with the
-`NewLinuxBoard` function.
+Linux (since there's no built-in clipboard interface). `glip` will choose
+whichever program is available, with a preference for `xsel` if both are
+avaiklable.
 
 <br />
 
 ## glipboard
 
 For an example of an application that uses `glip`, check out
-[`glipboard`](https://github.com/steven-xie/glipboard), a universal clipboard
-command-line accessor.
+[`glipboard`](https://github.com/steven-xie/glipboard), a platform-agnostic
+clipboard command-line accessor.
 
 [godoc]: https://godoc.org/github.com/steven-xie/glip
 [godoc-img]: https://godoc.org/github.com/steven-xie/glip?status.svg

@@ -16,8 +16,6 @@ type Xsel struct {
 	// Append is the value of Xsel's "--append" flag. If true, Xsel will append
 	// data to its target selection (instead of clearing the target selection and
 	// replacing its data).
-	//
-	// Read more about this flag at https://linux.die.net/man/1/xsel.
 	Append bool
 
 	*dynPortal

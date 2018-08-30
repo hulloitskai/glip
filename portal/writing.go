@@ -24,6 +24,7 @@ func (p *Portal) Write(data []byte) (n int, err error) {
 		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
+	// Receive results of write operation.
 	res := <-ch
 	if res.err != nil {
 		return 0, res.err
@@ -61,7 +62,7 @@ func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
-	// Receive results of asynchronous copy.
+	// Receive results of copy operation.
 	res := <-ch
 	if res.err != nil {
 		return 0, res.err
