@@ -8,33 +8,47 @@ clone_folder: C:\gopath\src\github.com\steven-xie\glip
 
 environment:
   GOPATH: C:\gopath
+  MINGW64_DIR: C:\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64\bin
+  GCC: x86_64-w64-mingw32-gcc.exe
   matrix:
-    - GOVERSION: 1.10
-    - GOVERSION: 1.11
+    - GOROOT: C:\go
+    - GOROOT: C:\go110
 
 platform:
-  - x86
   - x64
+  - x86
+
+matrix:
+  ## Calling PowerShell externally doesn't seem to be particularly stable
+  ## on x86.
+  allow_failures:
+    - platform: x86
 
 init:
   - git config --global core.autocrlf input
 
 install:
-  ## Install specific Go version.
-  - rmdir c:\go /s /q
-  - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
-  - msiexec /i go%GOVERSION%.windows-amd64.msi /q
+  ## Configure MinGW, put proper GOBIN at the front of the path.
+  - set PATH=%GOROOT%\bin;%MINGW64_DIR%;%PATH%
 
-  ## Install code linting tools.
-  - go get -u golang.org/x/lint/golint
+  ## Configure testing environment.
+  - ps: if ($env:PLATFORM -Eq "x86") { $env:GOARCH = "386" }
 
-  ## Configure Cygwin, which can run Makefiles.
-  - set PATH=C:\cygwin\bin;%PATH%
+  ## Log diagonistic information.
   - echo %GOPATH%
   - go version
   - go env
+  - ps: $PSVersionTable.PSVersion
 
 build: off
 deploy: off
 
-test_script: make review-race-v
+test_script:
+  - ps: |
+      if ($env:PLATFORM -Eq "x86") {
+        ## Emulate tests on an x86 architecture.
+        mingw32-make test-v
+      } else {
+        ## Test race conditions only on x64.
+        mingw32-make test-race-v
+      }

@@ -13,9 +13,16 @@ os:
   - linux
 
 env:
+  global:
+    - GOLINT_BIN="$GOPATH/bin/golint"
   matrix:
     - CLIP_PROGRAM="xclip"
     - CLIP_PROGRAM="xsel"
+
+## Cache Golint installation.
+cache:
+  directories:
+    - $GOLINT_BIN
 
 ## Mark Go version 'tip' as an optional.
 matrix:
@@ -28,17 +35,22 @@ matrix:
 
 ## Install dependencies and code review tools.
 before_install:
-  ## Required for auto-linting Go code.
-  - go get -u golang.org/x/lint/golint
-  ## Required for tests on Linux.
+  ## Install Golint, if no installation cache exists.
+  - if [ ! -e "$GOLINT_BIN" ]; then go get -u golang.org/x/lint/golint; fi
+
+  ## Install clipboard program if necessary.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       sudo apt-get update;
       sudo apt-get install "$CLIP_PROGRAM";
     fi
 
 install:
-  # Install all sub-packages; include tests.
+  ## Install all sub-packages; include tests.
   - go get -t ./...
+
+## List diagonstic information before running tests.
+before_script:
+  - go env
 
 script: |
   if [ "$TRAVIS_OS_NAME" == "osx" ];
