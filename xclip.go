@@ -82,19 +82,19 @@ func (x *Xclip) generateArgs() []string {
 
 const xclipOutFlag = "-out"
 
-// Read reads data to an X selection.
+// Read reads len(src) bytes from Xclip's target selection into src.
 func (x *Xclip) Read(src []byte) (n int, err error) {
 	x.AppendArgs(xclipOutFlag)
 	return x.dynPortal.Read(src)
 }
 
-// WriteTo writes data from an X selection into an io.Writer.
+// WriteTo writes data from Xclip's target selection into an io.Writer.
 func (x *Xclip) WriteTo(w io.Writer) (n int64, err error) {
 	x.AppendArgs(xclipOutFlag)
 	return x.dynPortal.WriteTo(w)
 }
 
-// ReadString reads data from an X selection as a string.
+// ReadString reads data from Xclip's target selection as a string.
 func (x *Xclip) ReadString() (s string, err error) {
 	x.AppendArgs(xclipOutFlag)
 	return x.dynPortal.ReadString()
@@ -106,19 +106,19 @@ func (x *Xclip) setFilterFlag() {
 	}
 }
 
-// Write writes len(p) bytes into an X selection.
+// Write writes len(p) bytes into Xclip's target selection.
 func (x *Xclip) Write(p []byte) (n int, err error) {
 	x.setFilterFlag()
 	return x.dynPortal.Write(p)
 }
 
-// WriteString writes a string into an X selection.
+// WriteString writes a string into Xclip's target selection.
 func (x *Xclip) WriteString(s string) (n int, err error) {
 	x.setFilterFlag()
 	return x.dynPortal.WriteString(s)
 }
 
-// ReadFrom reads data from an io.Reader into an X selection.
+// ReadFrom reads data from an io.Reader into Xclip's target selection.
 func (x *Xclip) ReadFrom(r io.Reader) (n int64, err error) {
 	x.setFilterFlag()
 	return x.dynPortal.ReadFrom(r)

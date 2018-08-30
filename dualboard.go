@@ -33,9 +33,9 @@ func (db *dualBoard) WriteString(s string) (n int, err error) {
 	return db.Writer.WriteString(s)
 }
 
-// Read reads data from the system clipboard into src.
-func (db *dualBoard) Read(src []byte) (n int, err error) {
-	return db.Reader.Read(src)
+// Read reads len(dst) bytes from the system clipboard into dst.
+func (db *dualBoard) Read(dst []byte) (n int, err error) {
+	return db.Reader.Read(dst)
 }
 
 // WriteTo writes data from the system clipboard into an io.Writer.
@@ -48,14 +48,12 @@ func (db *dualBoard) ReadString() (s string, err error) {
 	return db.Reader.ReadString()
 }
 
-// ReadPortal exposes dualBoard's underlying portal.Portal used for reading
-// from the clipboard.
+// ReadPortal exposes a portal.Portal used for reading from the clipboard.
 func (db *dualBoard) ReadPortal() *portal.Portal {
 	return db.Reader.Portal
 }
 
-// WritePortal exposes dualBoard's underlying portal.Portal used for writing
-// to the clipboard.
+// WritePortal exposes a portal.Portal used for writing to the clipboard.
 func (db *dualBoard) WritePortal() *portal.Portal {
 	return db.Writer.Portal
 }

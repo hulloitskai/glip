@@ -35,36 +35,36 @@ func (dp *dynPortal) AppendArgs(args ...string) {
 	dp.Args = append(dp.Args, args...)
 }
 
-// preflight is run before dynPortal's IO methods, to set its arguments from
-// GetArgs.
+// preflight is run before dynPortal's IO methods, to set its temporary
+// arguments using GetArgs.
 func (dp *dynPortal) preflight() {
 	dp.AppendArgs(dp.GetArgs()...)
 }
 
-// Write writes len(p) bytes to dynPortal's standard output.
+// Write writes len(p) bytes to the dynPortal.
 func (dp *dynPortal) Write(p []byte) (n int, err error) {
 	dp.preflight()
 	return dp.Portal.Write(p)
 }
 
-// WriteString writes a string to dynPortal's standard input.
+// WriteString writes a string to the dynPortal.
 func (dp *dynPortal) WriteString(s string) (n int, err error) {
 	return dp.Write([]byte(s))
 }
 
-// ReadFrom reads data from an io.Reader into dynPortal's standard input.
+// ReadFrom reads data from an io.Reader into the dynPortal.
 func (dp *dynPortal) ReadFrom(r io.Reader) (n int64, err error) {
 	dp.preflight()
 	return dp.Portal.ReadFrom(r)
 }
 
-// Read reads data from dynPortal's standard output to dst.
+// Read reads data from the dynPortal to dst.
 func (dp *dynPortal) Read(dst []byte) (n int, err error) {
 	dp.preflight()
 	return dp.Portal.Read(dst)
 }
 
-// ReadString reads data from the system clipboard as a string.
+// ReadString reads data from the dynPortal as a string.
 func (dp *dynPortal) ReadString() (s string, err error) {
 	builder := new(strings.Builder)
 	if _, err = dp.WriteTo(builder); err != nil {
@@ -73,20 +73,18 @@ func (dp *dynPortal) ReadString() (s string, err error) {
 	return builder.String(), nil
 }
 
-// WriteTo writes data from dynPortal's standard input to an io.Writer.
+// WriteTo writes data from the dynPortal into an io.Writer.
 func (dp *dynPortal) WriteTo(w io.Writer) (n int64, err error) {
 	dp.preflight()
 	return dp.Portal.WriteTo(w)
 }
 
-// ReadPortal exposes dynPortal's underlying portal.Portal used for reading from
-// the clipboard.
+// ReadPortal exposes a portal.Portal used for reading from the clipboard.
 func (dp *dynPortal) ReadPortal() *portal.Portal {
 	return dp.Portal
 }
 
-// WritePortal exposes dynPortal's underlying portal.Portal used for writing to
-// the clipboard.
+// WritePortal exposes a portal.Portal used for writing to the clipboard.
 func (dp *dynPortal) WritePortal() *portal.Portal {
 	return dp.Portal
 }

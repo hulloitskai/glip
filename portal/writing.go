@@ -5,63 +5,77 @@ import (
 	"io"
 )
 
-// Write allows for the writing of data into Portal's standard input.
+// Write writes len(data) bytes into the Portal.
 func (p *Portal) Write(data []byte) (n int, err error) {
-	defer p.Reload()
-
-	// Open a pipe to program Stdin.
-	in, err := p.StdinPipe()
-	if err != nil {
-		return 0, stdinPipeErr(err)
-	}
-
-	// Start program; begin writing to it's Stdin from data.
-	if err = p.Start(); err != nil {
-		return 0, startErr(err)
-	}
-	if n, err = in.Write(data); err != nil {
-		return n, fmt.Errorf("portal: could not write to Stdin: %v", err)
-	}
-
-	// Close Stdin to signal to the program that we are done with it.
-	if err = in.Close(); err != nil {
-		return n, closeStdinErr(err)
-	}
-
-	// Wait for the program to exit.
-	if err = p.Wait(); err != nil {
-		return n, waitErr(err)
-	}
-	return n, err
-}
-
-// ReadFrom allows for the piping of data from a io.Reader into Portal's
-// standard input.
-func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 	defer p.Reload()
 
 	// Open a pipe to Stdin.
 	in, err := p.StdinPipe()
 	if err != nil {
-		return 0, stdinPipeErr(err)
+		return 0, fmt.Errorf("portal: error during StdinPipe: %v", err)
 	}
 
-	// Start the program; read from the provided io.Reader to program Stdin.
+	// Asynchronously write to Stdin.
+	ch := make(chan iores)
+	go asyncWrite(in, data, ch)
+
+	// Start Cmd.
 	if err = p.Start(); err != nil {
-		return 0, startErr(err)
-	}
-	if n, err = io.Copy(in, r); err != nil {
-		return n, fmt.Errorf("portal: failed to write to Stdin: %v", err)
+		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
-	// Close program Stdin to signal that we are done with it.
+	res := <-ch
+	if res.err != nil {
+		return 0, res.err
+	}
+	n = res.n
+
+	// Close Stdin to signal to the program that we are done with it.
 	if err = in.Close(); err != nil {
-		return n, closeStdinErr(err)
+		return n, fmt.Errorf("portal: error while closing Stdin: %v", err)
+	}
+
+	// Wait for the program to exit.
+	if err = p.Wait(); err != nil {
+		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
+	}
+	return n, nil
+}
+
+// ReadFrom reads data from an io.Reader into the Portal.
+func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
+	defer p.Reload()
+
+	// Open a pipe to program stdin.
+	in, err := p.StdinPipe()
+	if err != nil {
+		return 0, fmt.Errorf("portal: error during StdinPipe: %v", err)
+	}
+
+	// Asynchronously copy data from r into program stdin.
+	ch := make(chan iores64)
+	go asyncCopy(in, r, ch)
+
+	// Start the program.
+	if err = p.Start(); err != nil {
+		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
+	}
+
+	// Receive results of asynchronous copy.
+	res := <-ch
+	if res.err != nil {
+		return 0, res.err
+	}
+	n = res.n
+
+	// Close program stdin to signal that we are done with it.
+	if err = in.Close(); err != nil {
+		return n, fmt.Errorf("portal: error while closing Stdin: %v", err)
 	}
 
 	// Wait for program to exit.
 	if err = p.Wait(); err != nil {
-		return n, waitErr(err)
+		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
 	}
-	return n, err
+	return n, nil
 }

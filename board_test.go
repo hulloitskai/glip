@@ -16,12 +16,12 @@ func TestBoard(t *testing.T) {
 		reflect.TypeOf(b).Elem().Name())
 
 	if _, err := b.WriteString(TestPhrase); err != nil {
-		writeBoardErr(err, t)
+		logWriteErr(err, t)
 	}
 
 	out, err := b.ReadString()
 	if err != nil {
-		readBoardErr(err, t)
+		logReadErr(err, t)
 	}
 
 	checkResult(out, t)
@@ -32,12 +32,12 @@ func TestBoard_Write(t *testing.T) {
 
 	buf := bytes.NewBufferString(TestPhrase)
 	if _, err := b.Write(buf.Bytes()); err != nil {
-		writeBoardErr(err, t)
+		logWriteErr(err, t)
 	}
 
 	out, err := b.ReadString()
 	if err != nil {
-		readBoardErr(err, t)
+		logReadErr(err, t)
 	}
 
 	checkResult(out, t)
@@ -47,12 +47,12 @@ func TestBoard_ReadFrom(t *testing.T) {
 
 	buf := bytes.NewBufferString(TestPhrase)
 	if _, err := b.ReadFrom(buf); err != nil {
-		writeBoardErr(err, t)
+		logWriteErr(err, t)
 	}
 
 	out, err := b.ReadString()
 	if err != nil {
-		readBoardErr(err, t)
+		logReadErr(err, t)
 	}
 
 	checkResult(out, t)
@@ -62,13 +62,13 @@ func TestBoard_Read(t *testing.T) {
 	b := makeBoard(t)
 
 	if _, err := b.WriteString(TestPhrase); err != nil {
-		writeBoardErr(err, t)
+		logWriteErr(err, t)
 	}
 
 	outbuf := make([]byte, len(TestPhrase))
 	_, err := b.Read(outbuf)
 	if err != nil {
-		readBoardErr(err, t)
+		logReadErr(err, t)
 	}
 
 	checkResult(string(outbuf), t)
@@ -78,13 +78,13 @@ func TestBoard_WriteTo(t *testing.T) {
 	b := makeBoard(t)
 
 	if _, err := b.WriteString(TestPhrase); err != nil {
-		writeBoardErr(err, t)
+		logWriteErr(err, t)
 	}
 	outbuf := new(bytes.Buffer)
 
 	_, err := b.WriteTo(outbuf)
 	if err != nil {
-		readBoardErr(err, t)
+		logReadErr(err, t)
 	}
 
 	checkResult(outbuf.String(), t)
@@ -105,10 +105,10 @@ func checkResult(out string, t *testing.T) {
 	}
 }
 
-func readBoardErr(err error, t *testing.T) {
+func logReadErr(err error, t *testing.T) {
 	t.Fatal("Failed to read from clipboard:", err)
 }
 
-func writeBoardErr(err error, t *testing.T) {
+func logWriteErr(err error, t *testing.T) {
 	t.Fatal("Failed to write to clipboard:", err)
 }

@@ -5,53 +5,68 @@ import (
 	"io"
 )
 
-// Read allows for the reading of data from Portal's standard output.
+// Read reads len(dst) of data from the Portal into dst.
 func (p *Portal) Read(dst []byte) (n int, err error) {
 	defer p.Reload()
 
 	// Open an pipe to Stdout.
 	out, err := p.StdoutPipe()
 	if err != nil {
-		return 0, stdoutPipeErr(err)
+		return 0, fmt.Errorf("portal: error during StdoutPipe: %v", err)
 	}
 
-	// Start p.Cmd; read data to destination.
+	// Asynchronously read from Stdout to dst.
+	ch := make(chan iores)
+	go asyncRead(out, dst, ch)
+
+	// Start Cmd.
 	if err = p.Start(); err != nil {
-		return 0, startErr(err)
-	}
-	if n, err = out.Read(dst); err != nil {
-		return n, fmt.Errorf("portal: failed to read from Stdout: %v", err)
+		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
-	// Wait for p.Cmd to complete.
+	// Receive results of read operation.
+	res := <-ch
+	if res.err != nil {
+		return 0, res.err
+	}
+	n = res.n
+
+	// Wait for Cmd to complete.
 	if err = p.Wait(); err != nil {
-		return n, waitErr(err)
+		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
 	}
 	return n, nil
 }
 
-// WriteTo allows for the piping of data from a Portal's standard output into
-// an io.Writer.
+// WriteTo writes data from the Portal into an io.Writer.
 func (p *Portal) WriteTo(w io.Writer) (n int64, err error) {
 	defer p.Reload()
 
 	// Open a pipe to Stdout.
 	out, err := p.StdoutPipe()
 	if err != nil {
-		return 0, stdoutPipeErr(err)
+		return 0, fmt.Errorf("portal: error during StdoutPipe: %v", err)
 	}
 
-	// Start p.Cmd; copy data from program Stdout to the provided io.Writer.
+	// Asynchronously copy data from Stdout into w.
+	ch := make(chan iores64)
+	go asyncCopy(w, out, ch)
+
+	// Start Cmd.
 	if err = p.Start(); err != nil {
-		return 0, startErr(err)
-	}
-	if n, err = io.Copy(w, out); err != nil {
-		return n, fmt.Errorf("portal: could not to copy from Stdout: %v", err)
+		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
-	// Wait for p.Cmd to complete.
+	// Receive results of copy operation.
+	res := <-ch
+	if res.err != nil {
+		return 0, res.err
+	}
+	n = res.n
+
+	// Wait for Cmd to exit.
 	if err = p.Wait(); err != nil {
-		return n, waitErr(err)
+		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
 	}
 	return n, nil
 }

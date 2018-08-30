@@ -12,8 +12,16 @@ os:
   - osx
   - linux
 
+env:
+  matrix:
+    - CLIP_PROGRAM="xclip"
+    - CLIP_PROGRAM="xsel"
+
 ## Mark Go version 'tip' as an optional.
 matrix:
+  exclude:
+    - os: osx
+      env: CLIP_PROGRAM="xsel"
   allow_failures:
     - go: 'tip'
   fast_finish: true
@@ -25,7 +33,7 @@ before_install:
   ## Required for tests on Linux.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       sudo apt-get update;
-      sudo apt-get install xclip;
+      sudo apt-get install "$CLIP_PROGRAM";
     fi
 
 install:
