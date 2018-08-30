@@ -71,9 +71,13 @@ avaiklable.
 
 ## glipboard
 
-For an example of an application that uses `glip`, check out
-[`glipboard`](https://github.com/steven-xie/glipboard), a platform-agnostic
-clipboard command-line accessor.
+For an example of an application that uses `glip`, check out `glipboard`
+(located at `/cmd/glipboard/`).
+
+`glipboard` was developed as an example of how `glip` can be used, as well as to
+be a universal clipboard interface that external programs can call in order to
+write to a system clipboard, if the underlying platform-specific command is
+available.
 
 [godoc]: https://godoc.org/github.com/steven-xie/glip
 [godoc-img]: https://godoc.org/github.com/steven-xie/glip?status.svg
