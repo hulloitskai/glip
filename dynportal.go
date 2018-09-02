@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/steven-xie/glip/portal"
 	"io"
+	"log"
 	"strings"
 )
 
@@ -39,6 +40,7 @@ func (dp *dynPortal) AppendArgs(args ...string) {
 // arguments using GetArgs.
 func (dp *dynPortal) preflight() {
 	dp.AppendArgs(dp.GetArgs()...)
+	log.Printf("dynportal.preflight: %#v", dp.Args)
 }
 
 // Write writes len(p) bytes to the dynPortal.

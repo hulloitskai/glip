@@ -79,7 +79,14 @@ func NewPShellBoard() (psb *PShellBoard, err error) {
 
 // cmdletPortal makes a dynPortal from a PowerShell cmdlet.
 func cmdletPortal(name string) *dynPortal {
-	return newDynPortal("PowerShell", "-Command", name)
+	return newDynPortal(
+		"PowerShell",
+		"-NoProfile", "-NonInteractive", "-NoLogo",
+		"-InputFormat", "text",
+		"-OutputFormat", "text",
+		"-WindowStyle", "hidden",
+		"-Command", name,
+	)
 }
 
 func (psb *PShellBoard) generateReaderArgs() []string {
