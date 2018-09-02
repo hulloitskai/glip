@@ -80,7 +80,10 @@ func (x *Xclip) generateArgs() []string {
 	return args
 }
 
-const xclipOutFlag = "-out"
+const (
+	xclipOutFlag = "-out"
+	xclipInFlag  = "-in"
+)
 
 // Read reads len(src) bytes from Xclip's target selection into src.
 func (x *Xclip) Read(src []byte) (n int, err error) {
@@ -109,17 +112,20 @@ func (x *Xclip) setFilterFlag() {
 // Write writes len(p) bytes into Xclip's target selection.
 func (x *Xclip) Write(p []byte) (n int, err error) {
 	x.setFilterFlag()
+	x.AppendArgs(xclipInFlag)
 	return x.dynPortal.Write(p)
 }
 
 // WriteString writes a string into Xclip's target selection.
 func (x *Xclip) WriteString(s string) (n int, err error) {
 	x.setFilterFlag()
+	x.AppendArgs(xclipInFlag)
 	return x.dynPortal.WriteString(s)
 }
 
 // ReadFrom reads data from an io.Reader into Xclip's target selection.
 func (x *Xclip) ReadFrom(r io.Reader) (n int64, err error) {
 	x.setFilterFlag()
+	x.AppendArgs(xclipInFlag)
 	return x.dynPortal.ReadFrom(r)
 }

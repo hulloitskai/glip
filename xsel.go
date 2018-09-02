@@ -74,25 +74,43 @@ func (x *Xsel) Delete() error {
 	return x.Run()
 }
 
-// setInputFlag enables Xsel's "--input" flag.
-func (x *Xsel) setInputFlag() {
-	x.AppendArgs("--input")
-}
+const (
+	xselInputFlag  = "--input"
+	xselOutputFlag = "--output"
+)
 
 // Write writes len(p) bytes into Xsel's target selection.
 func (x *Xsel) Write(p []byte) (n int, err error) {
-	x.setInputFlag()
+	x.AppendArgs(xselInputFlag)
 	return x.dynPortal.Write(p)
 }
 
 // WriteString writes a string into Xsel's target selection.
 func (x *Xsel) WriteString(s string) (n int, err error) {
-	x.setInputFlag()
+	x.AppendArgs(xselInputFlag)
 	return x.dynPortal.WriteString(s)
 }
 
 // ReadFrom reads data from an io.Reader into Xsel's target selection.
 func (x *Xsel) ReadFrom(r io.Reader) (n int64, err error) {
-	x.setInputFlag()
+	x.AppendArgs(xselInputFlag)
 	return x.dynPortal.ReadFrom(r)
+}
+
+// Read reads len(p) bytes from Xsel's target selection into dst.
+func (x *Xsel) Read(dst []byte) (n int, err error) {
+	x.AppendArgs(xselOutputFlag)
+	return x.dynPortal.Read(dst)
+}
+
+// WriteTo writes the contents of Xsel's target selection into w.
+func (x *Xsel) WriteTo(w io.Writer) (n int64, err error) {
+	x.AppendArgs(xselOutputFlag)
+	return x.dynPortal.WriteTo(w)
+}
+
+// ReadString reads the contents of Xsel's target selection into a string.
+func (x *Xsel) ReadString() (s string, err error) {
+	x.AppendArgs(xselOutputFlag)
+	return x.dynPortal.ReadString()
 }

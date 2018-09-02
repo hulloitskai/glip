@@ -7,15 +7,14 @@ import (
 	"testing"
 )
 
-const TestPhrase = "Hello, clipboard!"
-
 func TestBoard(t *testing.T) {
+	const instr = "TestBoard"
 	b := makeBoard(t)
 
 	t.Logf("Made a Board, with an underlying type of: %q",
 		reflect.TypeOf(b).Elem().Name())
 
-	if _, err := b.WriteString(TestPhrase); err != nil {
+	if _, err := b.WriteString(instr); err != nil {
 		logWriteErr(err, t)
 	}
 
@@ -24,13 +23,14 @@ func TestBoard(t *testing.T) {
 		logReadErr(err, t)
 	}
 
-	checkResult(out, t)
+	checkResult(out, instr, t)
 }
 
 func TestBoard_Write(t *testing.T) {
+	const instr = "TestBoard_Write"
 	b := makeBoard(t)
 
-	buf := bytes.NewBufferString(TestPhrase)
+	buf := bytes.NewBufferString(instr)
 	if _, err := b.Write(buf.Bytes()); err != nil {
 		logWriteErr(err, t)
 	}
@@ -40,12 +40,13 @@ func TestBoard_Write(t *testing.T) {
 		logReadErr(err, t)
 	}
 
-	checkResult(out, t)
+	checkResult(out, instr, t)
 }
 func TestBoard_ReadFrom(t *testing.T) {
+	const instr = "TestBoard_ReadFrom"
 	b := makeBoard(t)
 
-	buf := bytes.NewBufferString(TestPhrase)
+	buf := bytes.NewBufferString(instr)
 	if _, err := b.ReadFrom(buf); err != nil {
 		logWriteErr(err, t)
 	}
@@ -55,29 +56,31 @@ func TestBoard_ReadFrom(t *testing.T) {
 		logReadErr(err, t)
 	}
 
-	checkResult(out, t)
+	checkResult(out, instr, t)
 }
 
 func TestBoard_Read(t *testing.T) {
+	const instr = "TestBoard_Read"
 	b := makeBoard(t)
 
-	if _, err := b.WriteString(TestPhrase); err != nil {
+	n, err := b.WriteString(instr)
+	if err != nil {
 		logWriteErr(err, t)
 	}
 
-	outbuf := make([]byte, len(TestPhrase))
-	_, err := b.Read(outbuf)
-	if err != nil {
+	outbuf := make([]byte, n)
+	if _, err = b.Read(outbuf); err != nil {
 		logReadErr(err, t)
 	}
 
-	checkResult(string(outbuf), t)
+	checkResult(string(outbuf), instr, t)
 }
 
 func TestBoard_WriteTo(t *testing.T) {
+	const instr = "TestBoard_WriteTo"
 	b := makeBoard(t)
 
-	if _, err := b.WriteString(TestPhrase); err != nil {
+	if _, err := b.WriteString(instr); err != nil {
 		logWriteErr(err, t)
 	}
 	outbuf := new(bytes.Buffer)
@@ -87,7 +90,7 @@ func TestBoard_WriteTo(t *testing.T) {
 		logReadErr(err, t)
 	}
 
-	checkResult(outbuf.String(), t)
+	checkResult(outbuf.String(), instr, t)
 }
 
 func makeBoard(t *testing.T) glip.Board {
@@ -98,10 +101,10 @@ func makeBoard(t *testing.T) glip.Board {
 	return b
 }
 
-func checkResult(out string, t *testing.T) {
-	if out != TestPhrase {
-		t.Errorf("Expected output to equal input (\"%s\"), instead got: %q",
-			TestPhrase, out)
+func checkResult(out string, expect string, t *testing.T) {
+	if out != expect {
+		t.Errorf("Expected output to equal input (\"%s\"), instead got: \"%s\"",
+			expect, out)
 	}
 }
 
