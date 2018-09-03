@@ -52,3 +52,11 @@ test_script:
         ## Test race conditions only on x64.
         mingw32-make test-race-v
       }
+
+after_test:
+  - ps: |
+      if (Test-Path -PathType Leaf -Path "coverage.out") {
+        $env:PATH = "C:\msys64\usr\bin;${env:PATH}"
+        Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+        bash codecov.sh
+      }
