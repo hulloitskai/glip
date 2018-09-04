@@ -23,9 +23,9 @@ type Xsel struct {
 
 // NewXsel creates a new default Xsel instance.
 //
-// By default, Xsel will target the primary selection (XSPrimary).
+// By default, Xsel will target the clipboard selection (XSClipboard).
 func NewXsel() (x *Xsel, err error) {
-	return NewXselSelection(XSPrimary)
+	return NewXselSelection(XSClipboard)
 }
 
 // NewXselSelection creates an Xsel instance targeting a particular X selection.

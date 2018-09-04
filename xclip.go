@@ -44,9 +44,9 @@ type Xclip struct {
 // NewXclip creates a new default Xclip instance.
 //
 // By default, none of Xclip's flags are enabled, and Xclip will use the
-// XSPrimary selection.
+// clipboard selection (XSClipboard).
 func NewXclip() (x *Xclip, err error) {
-	return NewXclipSelection(XSPrimary)
+	return NewXclipSelection(XSClipboard)
 }
 
 // NewXclipSelection creates an Xclip instance targeting a particular X
