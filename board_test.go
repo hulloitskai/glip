@@ -26,6 +26,30 @@ func TestBoard(t *testing.T) {
 	checkResult(out, instr, t)
 }
 
+func TestBoard_multilength(t *testing.T) {
+	b := makeBoard(t)
+
+	for i := 100; i < 1000; i += 100 {
+		in := genstr(i)
+		t.Logf("Testing clipboard IO with string: \"%v\"", in)
+
+		if _, err := b.WriteString(in); err != nil {
+			t.Errorf("Failed to write string of length %d: %v", i, err)
+		}
+
+		glip.XPause()
+
+		out, err := b.ReadString()
+		if err != nil {
+			t.Errorf("Failed to read string of length %d: %v", i, err)
+		} else {
+			checkResult(out, in, t)
+		}
+
+		glip.XPause()
+	}
+}
+
 func TestBoard_Write(t *testing.T) {
 	const instr = "TestBoard_Write"
 	b := makeBoard(t)
@@ -114,4 +138,13 @@ func logReadErr(err error, t *testing.T) {
 
 func logWriteErr(err error, t *testing.T) {
 	t.Fatal("Failed to write to clipboard:", err)
+}
+
+// genstr generates a string of the specified length.
+func genstr(length int) string {
+	data := make([]byte, length)
+	for i := 0; i < length; i++ {
+		data[i] = 'E'
+	}
+	return string(data)
 }
