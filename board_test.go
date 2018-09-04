@@ -37,16 +37,12 @@ func TestBoard_multilength(t *testing.T) {
 			t.Errorf("Failed to write string of length %d: %v", i, err)
 		}
 
-		glip.XPause()
-
 		out, err := b.ReadString()
 		if err != nil {
 			t.Errorf("Failed to read string of length %d: %v", i, err)
 		} else {
 			checkResult(out, in, t)
 		}
-
-		glip.XPause()
 	}
 }
 
@@ -122,6 +118,11 @@ func makeBoard(t *testing.T) glip.Board {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	if xb, ok := b.(glip.XBoard); ok {
+		xb.XP().SafeWrites = true
+	}
+
 	return b
 }
 

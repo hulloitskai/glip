@@ -8,17 +8,12 @@ import "io"
 //
 // Read more about the Xsel program at https://linux.die.net/man/1/xsel.
 type Xsel struct {
-	// Selection is Xsel's target selection, defaults to XSPrimary.
-	//
-	// This is where Xsel will save / read clipboard data.
-	Selection XSelection
-
 	// Append is the value of Xsel's "--append" flag. If true, Xsel will append
 	// data to its target selection (instead of clearing the target selection and
 	// replacing its data).
 	Append bool
 
-	*dynPortal
+	*XPortal
 }
 
 // NewXsel creates a new default Xsel instance.
@@ -34,7 +29,12 @@ func NewXselSelection(sel XSelection) (x *Xsel, err error) {
 		return nil, err
 	}
 
-	x = &Xsel{dynPortal: newDynPortal("xsel"), Selection: sel}
+	xp := &XPortal{
+		dynPortal: newDynPortal("xsel"),
+		Selection: sel,
+	}
+	x = &Xsel{XPortal: xp}
+
 	x.GetArgs = x.generateArgs
 	return x, nil
 }
@@ -82,19 +82,19 @@ const (
 // Write writes len(p) bytes into Xsel's target selection.
 func (x *Xsel) Write(p []byte) (n int, err error) {
 	x.AppendArgs(xselInputFlag)
-	return x.dynPortal.Write(p)
+	return x.XPortal.Write(p)
 }
 
 // WriteString writes a string into Xsel's target selection.
 func (x *Xsel) WriteString(s string) (n int, err error) {
 	x.AppendArgs(xselInputFlag)
-	return x.dynPortal.WriteString(s)
+	return x.XPortal.WriteString(s)
 }
 
 // ReadFrom reads data from an io.Reader into Xsel's target selection.
 func (x *Xsel) ReadFrom(r io.Reader) (n int64, err error) {
 	x.AppendArgs(xselInputFlag)
-	return x.dynPortal.ReadFrom(r)
+	return x.XPortal.ReadFrom(r)
 }
 
 // Read reads len(p) bytes from Xsel's target selection into dst.

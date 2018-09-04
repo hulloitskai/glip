@@ -11,9 +11,6 @@ import (
 //
 // Read more about this program at https://linux.die.net/man/1/xclip.
 type Xclip struct {
-	// Selection is Xclip's target selection.
-	Selection XSelection
-
 	// Filter represents the Xclip's "-filter" flag.
 	//
 	// It causes Xclip to print the text piped to standard in back to standard
@@ -38,7 +35,7 @@ type Xclip struct {
 	// in the foreground.
 	Quiet bool
 
-	*dynPortal
+	*XPortal
 }
 
 // NewXclip creates a new default Xclip instance.
@@ -56,10 +53,12 @@ func NewXclipSelection(sel XSelection) (x *Xclip, err error) {
 		return nil, err
 	}
 
-	x = &Xclip{
+	xp := &XPortal{
 		dynPortal: newDynPortal("xclip"),
 		Selection: sel,
 	}
+	x = &Xclip{XPortal: xp}
+
 	x.GetArgs = x.generateArgs
 	return x, nil
 }
@@ -84,6 +83,11 @@ const (
 	xclipOutFlag = "-out"
 	xclipInFlag  = "-in"
 )
+
+// XP exposes Xclip's underlying XPortal.
+func (x *Xclip) XP() *XPortal {
+	return x.XPortal
+}
 
 // Read reads len(src) bytes from Xclip's target selection into src.
 func (x *Xclip) Read(src []byte) (n int, err error) {
@@ -113,19 +117,19 @@ func (x *Xclip) setFilterFlag() {
 func (x *Xclip) Write(p []byte) (n int, err error) {
 	x.setFilterFlag()
 	x.AppendArgs(xclipInFlag)
-	return x.dynPortal.Write(p)
+	return x.XPortal.Write(p)
 }
 
 // WriteString writes a string into Xclip's target selection.
 func (x *Xclip) WriteString(s string) (n int, err error) {
 	x.setFilterFlag()
 	x.AppendArgs(xclipInFlag)
-	return x.dynPortal.WriteString(s)
+	return x.XPortal.WriteString(s)
 }
 
 // ReadFrom reads data from an io.Reader into Xclip's target selection.
 func (x *Xclip) ReadFrom(r io.Reader) (n int64, err error) {
 	x.setFilterFlag()
 	x.AppendArgs(xclipInFlag)
-	return x.dynPortal.ReadFrom(r)
+	return x.XPortal.ReadFrom(r)
 }
