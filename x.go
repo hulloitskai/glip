@@ -1,5 +1,3 @@
-// +build !windows
-
 package glip
 
 // XSelection is a string that represents a particular X selection (a
@@ -17,8 +15,7 @@ const (
 // XBoard is a Board that interacts with an X server (and thus uses either
 // Xclip or Xsel under-the-hood).
 type XBoard interface {
-	// XP exposes an XBoard's underlying XPortal, so that common X-server related
-	// options can be set.
-	XP() *XPortal
+	// Opts exposes an X-server-related options struct.
+	Opts() *Xopts
 	Board
 }

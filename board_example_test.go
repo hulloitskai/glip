@@ -12,7 +12,7 @@ func makeSafeBoard() glip.Board {
 	// write operations wait for the X server to finish processing the data
 	// before continuing.
 	if xb, ok := b.(glip.XBoard); ok {
-		xb.XP().SafeWrites = true
+		xb.Opts().SafeWrites = true
 	}
 
 	return b

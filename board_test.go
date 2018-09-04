@@ -120,7 +120,7 @@ func makeBoard(t *testing.T) glip.Board {
 	}
 
 	if xb, ok := b.(glip.XBoard); ok {
-		xb.XP().SafeWrites = true
+		xb.Opts().SafeWrites = true
 	}
 
 	return b

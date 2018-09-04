@@ -13,8 +13,10 @@ type Xsel struct {
 	// replacing its data).
 	Append bool
 
-	*XPortal
+	*xPortal
 }
+
+const xselPauseLength = 8
 
 // NewXsel creates a new default Xsel instance.
 //
@@ -29,11 +31,12 @@ func NewXselSelection(sel XSelection) (x *Xsel, err error) {
 		return nil, err
 	}
 
-	xp := &XPortal{
-		dynPortal: newDynPortal("xsel"),
-		Selection: sel,
+	xp := &xPortal{
+		Xopts:       Xopts{Selection: sel},
+		dynPortal:   newDynPortal("xsel"),
+		pauseLength: xselPauseLength,
 	}
-	x = &Xsel{XPortal: xp}
+	x = &Xsel{xPortal: xp}
 
 	x.GetArgs = x.generateArgs
 	return x, nil
@@ -82,19 +85,19 @@ const (
 // Write writes len(p) bytes into Xsel's target selection.
 func (x *Xsel) Write(p []byte) (n int, err error) {
 	x.AppendArgs(xselInputFlag)
-	return x.XPortal.Write(p)
+	return x.xPortal.Write(p)
 }
 
 // WriteString writes a string into Xsel's target selection.
 func (x *Xsel) WriteString(s string) (n int, err error) {
 	x.AppendArgs(xselInputFlag)
-	return x.XPortal.WriteString(s)
+	return x.xPortal.WriteString(s)
 }
 
 // ReadFrom reads data from an io.Reader into Xsel's target selection.
 func (x *Xsel) ReadFrom(r io.Reader) (n int64, err error) {
 	x.AppendArgs(xselInputFlag)
-	return x.XPortal.ReadFrom(r)
+	return x.xPortal.ReadFrom(r)
 }
 
 // Read reads len(p) bytes from Xsel's target selection into dst.
