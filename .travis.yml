@@ -47,16 +47,17 @@ before_install:
 install:
   ## Install all sub-packages; include tests.
   - go get -t ./...
+  - |
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      export DISPLAY=:99.0
+      sh -e /etc/init.d/xvfb start # imitate an display on Linux
+    fi
 
 ## List diagonstic information before running tests.
 before_script:
   - go env
 
-script: |
-  if [ "$TRAVIS_OS_NAME" == "osx" ];
-  then make review-race-v;
-  else xvfb-run make review-race-v; # imitate an display on Linux
-  fi
+script: make review-race-v
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
