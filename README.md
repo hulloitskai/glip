@@ -53,7 +53,9 @@ using the wrapper struct.
 ### Windows:
 
 `glip` uses the the PowerShell `Get-Clipboard` and `Set-Clipboard` cmdlets to
-read and write to the Windows clipboard. If PowerShell is not available, the
+read and write to the Windows clipboard.
+
+If PowerShell is not available, the
 `clip` command is used to write to the Windows clipboard.
 
 ### macOS:
@@ -74,10 +76,10 @@ avaiklable.
 For an example of an application that uses `glip`, check out `glipboard`
 (located at `/cmd/glipboard/`).
 
-`glipboard` was developed as an example of how `glip` can be used, as well as to
-be a universal clipboard interface that external programs can call in order to
-write to a system clipboard, if the underlying platform-specific command is
-available.
+`glipboard` was developed to both showcase how `glip` can be used in a real
+application, as well as to be a universal clipboard interface that external
+programs can call in order to write to a system clipboard, if the underlying
+commands are available.
 
 [godoc]: https://godoc.org/github.com/steven-xie/glip
 [godoc-img]: https://godoc.org/github.com/steven-xie/glip?status.svg
