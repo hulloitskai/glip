@@ -1,7 +1,6 @@
 language: go
 
 go:
-  - '1.10'
   - '1.11'
   - tip
 
@@ -23,7 +22,10 @@ env:
 ## Cache Golint installation.
 cache:
   directories:
+    ## Preserve golint executable.
     - $GOLINT_BIN
+    ## Preserve Go module cache.
+    - $GOPATH/pkg/mod/cache
 
 ## Mark Go version 'tip' as an optional.
 matrix:
@@ -46,8 +48,8 @@ before_install:
     fi
 
 install:
-  ## Install all sub-packages; include tests.
-  - go get -t ./...
+  ## Install all dependencies.
+  - make get
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       export DISPLAY=:99.0

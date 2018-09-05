@@ -13,7 +13,6 @@ environment:
   MINGW64_DIR: C:\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64\bin
   matrix:
     - GOROOT: C:\go
-    - GOROOT: C:\go110
 
 platform:
   - x64
@@ -25,6 +24,11 @@ matrix:
   allow_failures:
     - platform: x86
 
+cache:
+  ## Preserve Go module cache.
+  - "%GOPATH%\\pkg\\mod\\cache"
+
+
 init:
   - git config --global core.autocrlf input
 
@@ -34,6 +38,9 @@ install:
 
   ## Configure testing environment.
   - ps: if ($env:PLATFORM -Eq "x86") { $env:GOARCH = "386" }
+
+  ## Install dependencies.
+  - mingw32-make get
 
   ## Log diagonistic information.
   - echo %GOPATH%
