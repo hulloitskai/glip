@@ -3,9 +3,10 @@
 _A clipboard interface for Go, compatible with Windows, Mac OS X, and Linux._
 
 [![godoc: reference][godoc-img]][godoc]
-[![codecov: coverage][codecov-img]][codecov]
+[![go report card][goreportcard-img]][goreportcard]
 [![travis: build][travis-img]][travis]
 [![appveyor: build][appveyor-img]][appveyor]
+[![codecov: coverage][codecov-img]][codecov]
 
 ## Usage
 
@@ -89,3 +90,5 @@ commands are available.
 [codecov-img]: https://codecov.io/gh/steven-xie/glip/branch/master/graph/badge.svg
 [appveyor]: https://ci.appveyor.com/project/StevenXie/glip
 [appveyor-img]: https://ci.appveyor.com/api/projects/status/ntdxh30vlbo55da7/branch/master?svg=true
+[goreportcard]: https://goreportcard.com/report/github.com/steven-xie/glip
+[goreportcard-img]: https://goreportcard.com/badge/github.com/steven-xie/glip

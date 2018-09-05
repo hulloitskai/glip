@@ -12,7 +12,7 @@ COVER_OUT = coverage.out
 
 ## ------ Commands (targets) -----
 ## Prevent targeting filenames...
-.PHONY: default init run build install get update review review-race \
+.PHONY: default init run build install get update fix review review-race \
 		review-bench check fmt test test-v test-race bench
 
 ## Default target when no arguments are given to make (build and run program).
@@ -79,6 +79,11 @@ update:
 		  exit 1; \
 		else printf "done.\n"; \
 		fi
+
+## Fixes Go code using "go fix"
+fix:
+	@printf 'Fixing Go code with "go fix":\n'
+	@go fix
 
 
 ## Formats, checks, and tests the code.

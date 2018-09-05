@@ -7,7 +7,7 @@ import (
 
 const TestPhrase = "Hello Portal!"
 
-func ExamplePortal() {
+func Example() {
 	p := portal.New("echo", TestPhrase)
 	p.WriteTo(os.Stdout)
 	// Output: Hello Portal!

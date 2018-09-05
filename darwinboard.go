@@ -49,7 +49,7 @@ func NewDarwinBoard() (db *DarwinBoard, err error) {
 	return NewDarwinBoardTarget(DPBGeneral)
 }
 
-// NewDarwinBoardTarget creates a new DarwinBoard targetting a specific macOS
+// NewDarwinBoardTarget creates a new DarwinBoard targeting a specific macOS
 // board, if its underlying programs can be found in the system path.
 func NewDarwinBoardTarget(board DPBoard) (db *DarwinBoard, err error) {
 	const (

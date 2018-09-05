@@ -46,7 +46,7 @@ func (wc *WinClip) ReadPortal() *portal.Portal {
 	return nil
 }
 
-// WritePortal retuns WinClip's underlying portal.Portal used for writing data
+// WritePortal returns WinClip's underlying portal.Portal used for writing data
 // to the clipboard.
 func (wc *WinClip) WritePortal() *portal.Portal {
 	return wc.Portal
