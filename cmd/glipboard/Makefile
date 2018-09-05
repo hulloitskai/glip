@@ -12,11 +12,16 @@ COVER_OUT = coverage.out
 
 ## ------ Commands (targets) -----
 ## Prevent targeting filenames...
-.PHONY: default init run build install get update fix review review-race \
-		review-bench check fmt test test-v test-race bench
+.PHONY: default init setup verify run build install get update fix \
+		_review_base review review-race review-bench check fmt test test-v \
+		test-race bench
 
 ## Default target when no arguments are given to make (build and run program).
 default: build run
+
+## Setup sets up a Go module by initializing the module and then verifying
+## its dependencies.
+setup: init verify
 
 ## Initializes a Go module in the current directory.
 init:
@@ -39,7 +44,7 @@ run:
 ## Builds the program specified by the main package.
 build:
 	@printf "Building... "
-	@GOBUILD_OUT="$$(go build 2>&1)"; \
+	@GOBUILD_OUT="$$(go build ./... 2>&1)"; \
 		if [ -n "$$GOBUILD_OUT" ]; then \
 		  printf "\n[ERROR] Failed to build program:\n"; \
 		  printf "$$GOBUILD_OUT\n"; \
@@ -48,7 +53,7 @@ build:
 		fi
 
 install:
-	@printf 'Installing with "go install"... '
+	@printf 'Installing... '
 	@GOINSTALL_OUT="$$(go install 2>&1)"; \
 		if [ -n "$$GOBUILD_OUT" ]; then \
 		  printf "\n[ERROR] failed to install:\n"; \
@@ -57,15 +62,11 @@ install:
 		else printf "done.\n"; \
 		fi
 
-
-## Installs package dependencies.
+## Installs dependencies.
 get:
-	@printf 'Installing package dependencies with "go get"... '
+	@printf "Installing dependencies... "
 	@GOGET_OUT="$$(go get ./... 2>&1)"; \
-		if [ -n "$$GOGET_OUT" ]; then \
-		  printf "\n[ERROR] Failed to install package dependencies:\n"; \
-		  printf "$$GOGET_OUT\n"; \
-		  exit 1; \
+		if [ -n "$$GOGET_OUT" ]; then printf "\n$$GOGET_OUT\n"; \
 		else printf "done.\n"; \
 		fi
 
@@ -73,7 +74,7 @@ get:
 update:
 	@printf 'Installing and updating package dependencies with "go get"... '
 	@GOGET_OUT="$$(go get -u 2>&1)"; \
-			if [ -n "$$GOGET_OUT" ]; then \
+		if [ -n "$$GOGET_OUT" ]; then \
 		  printf "\n[ERROR] Failed to install package dependencies:\n"; \
 		  printf "$$GOGET_OUT\n"; \
 		  exit 1; \
@@ -82,16 +83,26 @@ update:
 
 ## Fixes Go code using "go fix"
 fix:
-	@printf 'Fixing Go code with "go fix":\n'
-	@go fix
+	@printf 'Fixing Go code with "go fix"... '
+	@GOFIX_OUT="$$(go fix 2>&1)"; \
+		if [ -n "$$GOFIX_OUT" ]; then \
+		  printf "\n$$GOFIX_OUT\n"; \
+		else printf "done.\n"; \
+		fi
+
+## Verifies that Go module dependencies are satisfied.
+verify:
+	@printf "Verifying Go module dependencies:\n"
+	@go mod verify
 
 
 ## Formats, checks, and tests the code.
-review: fmt check test
-review-v: fmt check test-v
+_review_base: verify fmt check
+review: _review_base test
+review-v: _review_base test-v
 ## Like "review", but tests for race conditions.
-review-race: fmt check test-race
-review-race-v: fmt check test-race-v
+review-race: _review_base test-race
+review-race-v: _review_base test-race-v
 ## Like "review-race", but includes benchmarks.
 review-bench: review-race bench
 review-bench-v: review-race bench-v
