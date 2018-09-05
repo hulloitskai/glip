@@ -15,6 +15,7 @@ os:
 env:
   global:
     - GOLINT_BIN="$GOPATH/bin/golint"
+    - GO111MODULE="on"
   matrix:
     - CLIP_PROGRAM="xclip"
     - CLIP_PROGRAM="xsel"

@@ -8,8 +8,9 @@ clone_folder: C:\gopath\src\github.com\steven-xie\glip
 
 environment:
   GOPATH: C:\gopath
-  MINGW64_DIR: C:\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64\bin
+  GO111MODULE: "on"
   GCC: x86_64-w64-mingw32-gcc.exe
+  MINGW64_DIR: C:\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64\bin
   matrix:
     - GOROOT: C:\go
     - GOROOT: C:\go110
