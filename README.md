@@ -55,8 +55,8 @@ using the wrapper struct.
 `glip` uses the the PowerShell `Get-Clipboard` and `Set-Clipboard` cmdlets to
 read and write to the Windows clipboard.
 
-If PowerShell is not available, the
-`clip` command is used to write to the Windows clipboard.
+If PowerShell is not available, the `clip` command is used to write to the
+Windows clipboard.
 
 ### macOS:
 

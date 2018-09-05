@@ -16,7 +16,7 @@ type Xsel struct {
 	*xPortal
 }
 
-const xselPauseLength = 8
+const xselPauseLength = 9
 
 // NewXsel creates a new default Xsel instance.
 //
