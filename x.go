@@ -1,5 +1,3 @@
-// +build !windows
-
 package glip
 
 // XSelection is a string that represents a particular X selection (a
@@ -13,3 +11,11 @@ const (
 	XSSecondary            = "secondary" // also known as XA_SECONDARY
 	XSClipboard            = "clipboard" // also known as XA_CLIPBOARD
 )
+
+// XBoard is a Board that interacts with an X server (and thus uses either
+// Xclip or Xsel under-the-hood).
+type XBoard interface {
+	// Opts exposes an X-server-related options struct.
+	Opts() *Xopts
+	Board
+}

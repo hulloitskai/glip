@@ -11,9 +11,6 @@ import (
 //
 // Read more about this program at https://linux.die.net/man/1/xclip.
 type Xclip struct {
-	// Selection is Xclip's target selection.
-	Selection XSelection
-
 	// Filter represents the Xclip's "-filter" flag.
 	//
 	// It causes Xclip to print the text piped to standard in back to standard
@@ -38,15 +35,17 @@ type Xclip struct {
 	// in the foreground.
 	Quiet bool
 
-	*dynPortal
+	*xPortal
 }
+
+const xclipPauseLength = 5
 
 // NewXclip creates a new default Xclip instance.
 //
 // By default, none of Xclip's flags are enabled, and Xclip will use the
-// XSPrimary selection.
+// clipboard selection (XSClipboard).
 func NewXclip() (x *Xclip, err error) {
-	return NewXclipSelection(XSPrimary)
+	return NewXclipSelection(XSClipboard)
 }
 
 // NewXclipSelection creates an Xclip instance targeting a particular X
@@ -56,10 +55,13 @@ func NewXclipSelection(sel XSelection) (x *Xclip, err error) {
 		return nil, err
 	}
 
-	x = &Xclip{
-		dynPortal: newDynPortal("xclip"),
-		Selection: sel,
+	xp := &xPortal{
+		Xopts:       Xopts{Selection: sel},
+		dynPortal:   newDynPortal("xclip"),
+		pauseLength: xclipPauseLength,
 	}
+	x = &Xclip{xPortal: xp}
+
 	x.GetArgs = x.generateArgs
 	return x, nil
 }
@@ -80,7 +82,10 @@ func (x *Xclip) generateArgs() []string {
 	return args
 }
 
-const xclipOutFlag = "-out"
+const (
+	xclipOutFlag = "-out"
+	xclipInFlag  = "-in"
+)
 
 // Read reads len(src) bytes from Xclip's target selection into src.
 func (x *Xclip) Read(src []byte) (n int, err error) {
@@ -109,17 +114,20 @@ func (x *Xclip) setFilterFlag() {
 // Write writes len(p) bytes into Xclip's target selection.
 func (x *Xclip) Write(p []byte) (n int, err error) {
 	x.setFilterFlag()
-	return x.dynPortal.Write(p)
+	x.AppendArgs(xclipInFlag)
+	return x.xPortal.Write(p)
 }
 
 // WriteString writes a string into Xclip's target selection.
 func (x *Xclip) WriteString(s string) (n int, err error) {
 	x.setFilterFlag()
-	return x.dynPortal.WriteString(s)
+	x.AppendArgs(xclipInFlag)
+	return x.xPortal.WriteString(s)
 }
 
 // ReadFrom reads data from an io.Reader into Xclip's target selection.
 func (x *Xclip) ReadFrom(r io.Reader) (n int64, err error) {
 	x.setFilterFlag()
-	return x.dynPortal.ReadFrom(r)
+	x.AppendArgs(xclipInFlag)
+	return x.xPortal.ReadFrom(r)
 }

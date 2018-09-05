@@ -15,26 +15,21 @@ func (p *Portal) Read(dst []byte) (n int, err error) {
 		return 0, fmt.Errorf("portal: error during StdoutPipe: %v", err)
 	}
 
-	// Asynchronously read from Stdout to dst.
-	ch := make(chan iores)
-	go asyncRead(out, dst, ch)
-
 	// Start Cmd.
 	if err = p.Start(); err != nil {
 		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
-	// Receive results of read operation.
-	res := <-ch
-	if res.err != nil {
-		return 0, res.err
+	// Perform read operation.
+	if n, err = out.Read(dst); err != nil {
+		return 0, fmt.Errorf("portal: error while reading from Stdout: %v", err)
 	}
-	n = res.n
 
 	// Wait for Cmd to complete.
 	if err = p.Wait(); err != nil {
 		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
 	}
+
 	return n, nil
 }
 
@@ -48,25 +43,20 @@ func (p *Portal) WriteTo(w io.Writer) (n int64, err error) {
 		return 0, fmt.Errorf("portal: error during StdoutPipe: %v", err)
 	}
 
-	// Asynchronously copy data from Stdout into w.
-	ch := make(chan iores64)
-	go asyncCopy(w, out, ch)
-
 	// Start Cmd.
 	if err = p.Start(); err != nil {
 		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
-	// Receive results of copy operation.
-	res := <-ch
-	if res.err != nil {
-		return 0, res.err
+	// Copy data from Stdout into w.
+	if n, err = io.Copy(w, out); err != nil {
+		return 0, fmt.Errorf("portal: error while copying from Stdout: %v", err)
 	}
-	n = res.n
 
 	// Wait for Cmd to exit.
 	if err = p.Wait(); err != nil {
 		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
 	}
+
 	return n, nil
 }

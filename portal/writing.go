@@ -15,21 +15,15 @@ func (p *Portal) Write(data []byte) (n int, err error) {
 		return 0, fmt.Errorf("portal: error during StdinPipe: %v", err)
 	}
 
-	// Asynchronously write to Stdin.
-	ch := make(chan iores)
-	go asyncWrite(in, data, ch)
-
 	// Start Cmd.
 	if err = p.Start(); err != nil {
 		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
-	// Receive results of write operation.
-	res := <-ch
-	if res.err != nil {
-		return 0, res.err
+	// Perform write operation.
+	if n, err = in.Write(data); err != nil {
+		return 0, fmt.Errorf("portal: error while writing to Stdin: %v", err)
 	}
-	n = res.n
 
 	// Close Stdin to signal to the program that we are done with it.
 	if err = in.Close(); err != nil {
@@ -40,10 +34,11 @@ func (p *Portal) Write(data []byte) (n int, err error) {
 	if err = p.Wait(); err != nil {
 		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
 	}
+
 	return n, nil
 }
 
-// ReadFrom reads data from an io.Reader into the Portal.
+// ReadFrom writes data from an io.Reader into the Portal.
 func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 	defer p.Reload()
 
@@ -53,21 +48,15 @@ func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 		return 0, fmt.Errorf("portal: error during StdinPipe: %v", err)
 	}
 
-	// Asynchronously copy data from r into program stdin.
-	ch := make(chan iores64)
-	go asyncCopy(in, r, ch)
-
 	// Start the program.
 	if err = p.Start(); err != nil {
 		return 0, fmt.Errorf("portal: error while starting Cmd: %v", err)
 	}
 
-	// Receive results of copy operation.
-	res := <-ch
-	if res.err != nil {
-		return 0, res.err
+	// Copy data from r into Stdin.
+	if n, err = io.Copy(in, r); err != nil {
+		return 0, fmt.Errorf("portal: error while copying to Stdin: %v", err)
 	}
-	n = res.n
 
 	// Close program stdin to signal that we are done with it.
 	if err = in.Close(); err != nil {
@@ -78,5 +67,6 @@ func (p *Portal) ReadFrom(r io.Reader) (n int64, err error) {
 	if err = p.Wait(); err != nil {
 		return 0, fmt.Errorf("portal: error while waiting for Cmd to exit: %v", err)
 	}
+
 	return n, nil
 }

@@ -5,9 +5,22 @@ import (
 	"github.com/steven-xie/glip"
 )
 
+func makeSafeBoard() glip.Board {
+	b, _ := glip.NewBoard()
+
+	// If b is a glip.Board that interacts with the X server, ensure that all
+	// write operations wait for the X server to finish processing the data
+	// before continuing.
+	if xb, ok := b.(glip.XBoard); ok {
+		xb.Opts().SafeWrites = true
+	}
+
+	return b
+}
+
 func ExampleBoard() {
 	// Make a new glip.Board instance.
-	b, _ := glip.NewBoard()
+	b := makeSafeBoard()
 
 	// Write a string into the clipboard.
 	b.WriteString("example string")
