@@ -12,11 +12,16 @@ COVER_OUT = coverage.out
 
 ## ------ Commands (targets) -----
 ## Prevent targeting filenames...
-.PHONY: default run build install get update review review-race review-bench \
-		check fmt test test-v test-race bench
+.PHONY: default init run build install get update review review-race \
+		review-bench check fmt test test-v test-race bench
 
 ## Default target when no arguments are given to make (build and run program).
 default: build run
+
+## Initializes a Go module in the current directory.
+init:
+	@printf "Initializing Go module:\n"
+	@go mod init
 
 ## Builds and runs the program (package must be main).
 run:
