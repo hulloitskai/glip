@@ -1,7 +1,7 @@
 package portal_test
 
 import (
-	"github.com/steven-xie/glip/portal"
+	"github.com/stevenxie/glip/portal"
 	"os/exec"
 	"testing"
 )

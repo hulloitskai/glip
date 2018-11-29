@@ -4,7 +4,7 @@ package glip
 
 import (
 	"errors"
-	"github.com/steven-xie/glip/portal"
+	"github.com/stevenxie/glip/portal"
 	"io"
 )
 

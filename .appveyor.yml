@@ -4,7 +4,7 @@ image:
   - Visual Studio 2017
 
 clone_depth: 3
-clone_folder: C:\gopath\src\github.com\steven-xie\glip
+clone_folder: C:\gopath\src\github.com\stevenxie\glip
 
 environment:
   GOPATH: C:\gopath

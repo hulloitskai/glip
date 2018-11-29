@@ -2,7 +2,7 @@ package glip_test
 
 import (
 	"bytes"
-	"github.com/steven-xie/glip"
+	"github.com/stevenxie/glip"
 	"reflect"
 	"testing"
 )

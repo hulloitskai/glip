@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/steven-xie/glip"
+	"github.com/stevenxie/glip"
 	"log"
 	"os"
 )
