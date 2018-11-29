@@ -1,1 +1,1 @@
-module github.com/steven-xie/glip
+module github.com/stevenxie/glip

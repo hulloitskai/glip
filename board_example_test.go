@@ -2,7 +2,7 @@ package glip_test
 
 import (
 	"fmt"
-	"github.com/steven-xie/glip"
+	"github.com/stevenxie/glip"
 )
 
 func makeSafeBoard() glip.Board {

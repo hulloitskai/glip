@@ -5,7 +5,7 @@ package glip_test
 import (
 	"bytes"
 	"fmt"
-	"github.com/steven-xie/glip"
+	"github.com/stevenxie/glip"
 	"testing"
 )
 
